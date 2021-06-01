@@ -184,9 +184,9 @@ class report_customsql_report_testcase extends advanced_testcase {
         list($today, $yesterday) = report_customsql_get_daily_time_starts($timenow, $currenthour);
 
         // Test entry 1.
-        // This report is supposed to run at the current hour (wehenver this test is run).
-        // The last run time recorded in the database is acutally tomorrow(!)
-        // relative to $timestamp. (Acutally timestamp is yesterday.)
+        // This report is supposed to run at the current hour (whenever this test is run).
+        // The last run time recorded in the database is actually tomorrow(!)
+        // relative to $timestamp. Actually timestamp is yesterday.
         $lastrun = $today;
         $timestamp = $lastrun - ($today - $yesterday);
         $id = $this->create_a_database_row('daily', $currenthour, $lastrun, null);
