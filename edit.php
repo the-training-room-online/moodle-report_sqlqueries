@@ -68,7 +68,9 @@ if ($newreport = $mform->get_data()) {
     $newreport->descriptionformat = $newreport->description['format'];
     $newreport->description = $newreport->description['text'];
 
-    $newreport->emailto = implode(',', $newreport->emailto);
+    $newreport->emailto = implode(',', array_filter($newreport->emailto, function ($userid) {
+        return ! empty($userid);
+    }));
 
     // Set the following fields to empty strings if the report is running manually.
     if ($newreport->runable === 'manual') {
