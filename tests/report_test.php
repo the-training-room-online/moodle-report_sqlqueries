@@ -159,7 +159,8 @@ class report_customsql_report_testcase extends advanced_testcase {
 
     public function test_report_customsql_email_options() {
         $options = array('emailnumberofrows' => get_string('emailnumberofrows', 'report_customsql'),
-                'emailresults' => get_string('emailresults', 'report_customsql'));
+                'emailresults' => get_string('emailresults', 'report_customsql'),
+                'emailattachment' => get_string('emailattachment', 'report_customsql'));
         $this->assertEquals($options, report_customsql_email_options());
     }
 
