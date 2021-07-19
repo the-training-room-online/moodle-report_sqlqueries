@@ -17,20 +17,21 @@
 /**
  * Web service declarations.
  *
- * @package   report_customsql
- * @copyright 2020 the Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2020 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-    'report_customsql_get_users' => [
-        'classname' => 'report_customsql\external\get_users',
+    'report_sqlqueries_get_users' => [
+        'classname' => 'report_sqlqueries\external\get_users',
         'methodname' => 'execute',
         'classpath' => '',
         'description' => 'Use by form autocomplete for selecting users to receive emails.',
-        'capabilities' => 'report/customsql:definequeries',
+        'capabilities' => 'report/sqlqueries:definequeries',
         'type' => 'read',
         'ajax' => true,
     ],

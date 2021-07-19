@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Script to download the CSV version of a SQL report.
+ * Script to download the CSV version of a SQL Query report.
  *
- * @package report_customsql
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2009 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
@@ -31,9 +32,9 @@ $id = required_param('id', PARAM_INT);
 $csvtimestamp = required_param('timestamp', PARAM_INT);
 $dataformat = optional_param('dataformat', '', PARAM_ALPHA);
 
-$report = $DB->get_record('report_customsql_queries', array('id' => $id));
+$report = $DB->get_record('report_sqlqueries_queries', array('id' => $id));
 if (!$report) {
-    print_error('invalidreportid', 'report_customsql', report_customsql_url('index.php'), $id);
+    print_error('invalidreportid', 'report_sqlqueries', report_sqlqueries_url('index.php'), $id);
 }
 
 require_login();
@@ -42,12 +43,12 @@ if (!empty($report->capability)) {
     require_capability($report->capability, $context);
 }
 
-list($csvfilename) = report_customsql_csv_filename($report, $csvtimestamp);
+list($csvfilename) = report_sqlqueries_csv_filename($report, $csvtimestamp);
 
 $handle = fopen($csvfilename, 'r');
 if ($handle === false) {
-    print_error('unknowndownloadfile', 'report_customsql',
-                report_customsql_url('view.php?id=' . $id));
+    print_error('unknowndownloadfile', 'report_sqlqueries',
+                report_sqlqueries_url('view.php?id=' . $id));
 }
 
 $fields = fgetcsv($handle);

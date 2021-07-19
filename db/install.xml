@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="report/customsql/db" VERSION="20150630" COMMENT="XMLDB file for Moodle report/customsql"
+<XMLDB PATH="report/sqlqueries/db" VERSION="20150630" COMMENT="XMLDB file for Moodle report/sqlqueries"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="report_customsql_queries" COMMENT="Custom SQL queries that can be run as ad-hoc reports.">
+    <TABLE NAME="report_sqlqueries_queries" COMMENT="SQL queries that can be run as SQL Query reports.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="displayname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the report as displayed in the UI"/>
@@ -21,15 +21,15 @@
         <FIELD NAME="at" TYPE="char" LENGTH="16" NOTNULL="false" SEQUENCE="false" COMMENT="The time for the daily report"/>
         <FIELD NAME="emailto" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="A comma-separated list of user ids"/>
         <FIELD NAME="emailwhat" TYPE="char" LENGTH="64" NOTNULL="false" SEQUENCE="false" COMMENT="A list of email options in a select menu"/>
-        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The category ID from report_customsql_categories table."/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The category ID from report_sqlqueries_categories table."/>
         <FIELD NAME="customdir" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="categoryidkey" TYPE="foreign" FIELDS="categoryid" REFTABLE="report_customsql_categories" REFFIELDS="id"/>
+        <KEY NAME="categoryidkey" TYPE="foreign" FIELDS="categoryid" REFTABLE="report_sqlqueries_categories" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="report_customsql_categories" COMMENT="A list of available categories">
+    <TABLE NAME="report_sqlqueries_categories" COMMENT="A list of available categories">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A list of category names"/>

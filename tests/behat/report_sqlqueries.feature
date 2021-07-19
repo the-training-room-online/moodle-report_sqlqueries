@@ -1,12 +1,12 @@
-@ou @ou_vle @report @report_customsql
-Feature: Ad-hoc database queries report
+@report @report_sqlqueries
+Feature: SQL Query Reports
   As an administrator
   In order to understand what is going on in my Moodle site
   I need to be able to run arbitrary queries against the database
 
-  Scenario: Create an Ad-hoc database query
+  Scenario: Create an SQL Query report
     When I log in as "admin"
-    And I navigate to "Reports > Ad-hoc database queries" in site administration
+    And I navigate to "Reports > SQL Query Reports" in site administration
     And I press "Add a new query"
     And I set the following fields to these values:
       | Query name  | Test query                                    |
@@ -20,13 +20,13 @@ Feature: Ad-hoc database queries report
     And I should see "Download these results as"
     And the "Download these results as" select box should contain "Comma separated values (.csv)"
 
-  Scenario: Edit an Ad-hoc database query
-    Given the following custom sql report exists:
+  Scenario: Edit an SQL Query report
+    Given the following SQL Query report exists:
       | name        | Test query                                    |
       | description | Display the Moodle internal version number.   |
       | querysql    | SELECT * FROM {config} WHERE name = 'version' |
     When I log in as "admin"
-    And I navigate to "Reports > Ad-hoc database queries" in site administration
+    And I navigate to "Reports > SQL Query Reports" in site administration
     And I follow "Edit query 'Test query'"
     And the following fields match these values:
       | Query name  | Test query                                    |
@@ -41,23 +41,23 @@ Feature: Ad-hoc database queries report
     And I should see "New description."
     And I should see "This report has 1 rows."
 
-  Scenario: Delete an Ad-hoc database query
-    Given the following custom sql report exists:
+  Scenario: Delete an SQL Query report
+    Given the following SQL Query report exists:
       | name        | Test query                                    |
       | description | Display the Moodle internal version number.   |
       | querysql    | SELECT * FROM {config} WHERE name = 'version' |
     When I log in as "admin"
-    And I navigate to "Reports > Ad-hoc database queries" in site administration
+    And I navigate to "Reports > SQL Query Reports" in site administration
     And I follow "Delete query 'Test query'"
     And I press "Yes"
     Then I should not see "Test query"
 
   Scenario: View an Ad-hoc database query that returns no data
-    Given the following custom sql report exists:
+    Given the following SQL Query report exists:
       | name        | Test query                               |
       | querysql    | SELECT * FROM {config} WHERE name = '-1' |
     When I log in as "admin"
-    And I view the "Test query" custom sql report
+    And I view the "Test query" SQL Query report
     Then I should see "This query did not return any data."
 
   Scenario: Create an Ad-hoc database queries category
@@ -71,7 +71,7 @@ Feature: Ad-hoc database queries report
 
   @javascript
   Scenario: Create an Ad-hoc database query in a custom category
-    Given the custom sql report category "Special reports" exists:
+    Given the SQL Query report category "Special reports" exists:
     When I log in as "admin"
     And I navigate to "Reports > Ad-hoc database queries" in site administration
     And I follow "Special reports"
@@ -95,7 +95,7 @@ Feature: Ad-hoc database queries report
     And I should see "Collapse all"
 
   Scenario: Delete an empty Ad-hoc database queries category
-    Given the custom sql report category "Special reports" exists:
+    Given the SQL Query report category "Special reports" exists:
     When I log in as "admin"
     And I navigate to "Reports > Ad-hoc database queries" in site administration
     And I press "Manage report categories"
@@ -105,7 +105,7 @@ Feature: Ad-hoc database queries report
     And "Delete category 'Miscellaneous'" "link" should not exist
 
   Scenario: A query that uses the various auto-formatting options
-    Given the custom sql report "Formatting test" exists with SQL:
+    Given the SQL Query report "Formatting test" exists with SQL:
       """
       SELECT
         'Not a date'               AS String_date,
@@ -119,20 +119,20 @@ Feature: Ad-hoc database queries report
         '<b>Raw HTML</b>'          AS HTML_should_be_escaped
       """
     When I log in as "admin"
-    And I view the "Formatting test" custom sql report
+    And I view the "Formatting test" SQL Query report
     Then I should see "Formatting test"
-    And "Not a date" row "String date" column of "report_customsql_results" table should contain "Not a date"
-    And "Not a date" row "Date date" column of "report_customsql_results" table should contain "2018-11-22"
-    And "Not a date" row "URL to link" column of "report_customsql_results" table should contain "http://example.com/1"
-    And "Not a date" row "Link text" column of "report_customsql_results" table should contain "This is a link"
-    And "Not a date" row "Not link" column of "report_customsql_results" table should contain "Non-link, invalid URL"
-    And "Not a date" row "Just a link url" column of "report_customsql_results" table should contain "http://example.com/3"
-    And "Not a date" row "HTML should be escaped" column of "report_customsql_results" table should contain "<b>Raw HTML</b>"
-    And "http://example.com/1" "link" should exist in the "report_customsql_results" "table"
-    And "This is a link" "link" should exist in the "report_customsql_results" "table"
-    And "Non-link, invalid URL" "link" should not exist in the "report_customsql_results" "table"
-    And "http://example.com/3" "link" should exist in the "report_customsql_results" "table"
-    And I should not see "Link text link url" in the "report_customsql_results" "table"
+    And "Not a date" row "String date" column of "report_sqlqueries_results" table should contain "Not a date"
+    And "Not a date" row "Date date" column of "report_sqlqueries_results" table should contain "2018-11-22"
+    And "Not a date" row "URL to link" column of "report_sqlqueries_results" table should contain "http://example.com/1"
+    And "Not a date" row "Link text" column of "report_sqlqueries_results" table should contain "This is a link"
+    And "Not a date" row "Not link" column of "report_sqlqueries_results" table should contain "Non-link, invalid URL"
+    And "Not a date" row "Just a link url" column of "report_sqlqueries_results" table should contain "http://example.com/3"
+    And "Not a date" row "HTML should be escaped" column of "report_sqlqueries_results" table should contain "<b>Raw HTML</b>"
+    And "http://example.com/1" "link" should exist in the "report_sqlqueries_results" "table"
+    And "This is a link" "link" should exist in the "report_sqlqueries_results" "table"
+    And "Non-link, invalid URL" "link" should not exist in the "report_sqlqueries_results" "table"
+    And "http://example.com/3" "link" should exist in the "report_sqlqueries_results" "table"
+    And I should not see "Link text link url" in the "report_sqlqueries_results" "table"
     And I should see "This report has 1 rows."
 
   Scenario: Create and run an Ad-hoc database query that has parameters
@@ -156,24 +156,24 @@ Feature: Ad-hoc database queries report
     And I should see "This report has 1 rows."
 
   Scenario: Link directly to an Ad-hoc database query that has parameters
-    Given the following custom sql report exists:
+    Given the following SQL Query report exists:
       | name        | Find user                                       |
       | querysql    | SELECT * FROM {user} WHERE username = :username |
     When I log in as "admin"
-    And I view the "Find user" custom sql report with these URL parameters:
+    And I view the "Find user" SQL Query report with these URL parameters:
       | username | frog |
     Then I should see "This query did not return any data."
-    And I view the "Find user" custom sql report with these URL parameters:
+    And I view the "Find user" SQL Query report with these URL parameters:
       | username | admin |
     And I should see "moodle@example.com"
     And I should see "This report has 1 rows."
 
   Scenario: Link directly to an Ad-hoc database query giving some parameters
-    Given the following custom sql report exists:
+    Given the following SQL Query report exists:
       | name        | Find user                                                                  |
       | querysql    | SELECT * FROM {user} WHERE firstname = :firstname AND lastname = :lastname |
     When I log in as "admin"
-    And I view the "Find user" custom sql report with these URL parameters:
+    And I view the "Find user" SQL Query report with these URL parameters:
       | firstname | Admin |
     Then I should see "Find user"
     And I should see "Query parameters"
@@ -188,7 +188,7 @@ Feature: Ad-hoc database queries report
 
   Scenario: Test reporting when a query exceeds the limit
     Given the following config values are set as admin:
-      | querylimitdefault | 1 | report_customsql |
+      | querylimitdefault | 1 | report_sqlqueries |
     When I log in as "admin"
     And I navigate to "Reports > Ad-hoc database queries" in site administration
     And I press "Add a new query"

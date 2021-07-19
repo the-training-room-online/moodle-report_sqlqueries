@@ -32,7 +32,7 @@
     display: none;
 }
 
-#page-admin-report-customsql-edit #id_querysql {
+#page-admin-report-sqlqueries-edit #id_querysql {
     min-width: 100%;
     font-family: "SF Mono", "Monaco", "Andale Mono", Consolas, "Lucida Console", "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
 }

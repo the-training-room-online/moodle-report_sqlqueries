@@ -15,19 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version.php file for the Custom SQL admin report.
+ * version.php file for the SQL Queries admin report.
  *
- * @package   report_customsql
- * @copyright 2015 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2015 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020121800;
+$plugin->version   = 2021071600;
 $plugin->requires  = 2020061500;
-$plugin->component = 'report_customsql';
+$plugin->component = 'report_sqlqueries';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '4.0 for Moodle 3.9+';
+$plugin->release   = '4.1 for Moodle 3.9+';
 
 $plugin->outestssufficient = true;

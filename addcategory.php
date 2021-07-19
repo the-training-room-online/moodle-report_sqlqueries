@@ -15,16 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Custom SQL reporting categories.
+ * SQL Query reporting categories.
  *
- * Users with the report/customsql:managecategories capability can enter custom
+ * Users with the report/sqlqueries:managecategories capability can enter custom
  *
  * This page shows the list of categories, with edit icons, and an add new button
- * if you have the report/customsql:managecategories capability.
+ * if you have the report/sqlqueries:managecategories capability.
  *
- * @package report_customsql
- * @copyright 2013 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2013 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
@@ -33,8 +34,8 @@ require_once(dirname(__FILE__) . '/categoryadd_form.php');
 require_once($CFG->libdir . '/adminlib.php');
 
 $context = context_system::instance();
-admin_externalpage_setup('report_customsql', '', null, '/report/customsql/addcategory.php');
-require_capability('report/customsql:managecategories', $context);
+admin_externalpage_setup('report_sqlqueries', '', null, '/report/sqlqueries/addcategory.php');
+require_capability('report/sqlqueries:managecategories', $context);
 
 $relativeurl = 'addcategory.php';
 
@@ -47,35 +48,35 @@ if ($id) {
     $queryparams['categoryid'] = $id;
     $isadding = false;
     // Editing an existing category.
-    $category = $DB->get_record('report_customsql_categories',
+    $category = $DB->get_record('report_sqlqueries_categories',
             array('id' => $id), '*', MUST_EXIST);
 } else {
     $queryparams['categoryid'] = null;
     $isadding = true;
 }
 
-$mform = new report_customsql_addcategory_form(report_customsql_url($relativeurl), $queryparams);
+$mform = new report_sqlqueries_addcategory_form(report_sqlqueries_url($relativeurl), $queryparams);
 
 if ($mform->is_cancelled()) {
-    redirect(report_customsql_url('manage.php'));
+    redirect(report_sqlqueries_url('manage.php'));
 }
 
 if ($data = $mform->get_data()) {
     if ($isadding) {
-        $DB->insert_record('report_customsql_categories', $data);
+        $DB->insert_record('report_sqlqueries_categories', $data);
     } else {
         $updrec = new stdClass();
         $updrec->id = $data->id;
         $updrec->name = $data->name;
-        $DB->update_record('report_customsql_categories', $updrec);
+        $DB->update_record('report_sqlqueries_categories', $updrec);
     }
-    redirect(report_customsql_url('manage.php'));
+    redirect(report_sqlqueries_url('manage.php'));
 }
 
 if ($id) {
-    $headstr = get_string('editcategory', 'report_customsql');
+    $headstr = get_string('editcategory', 'report_sqlqueries');
 } else {
-    $headstr = get_string('addcategory', 'report_customsql');
+    $headstr = get_string('addcategory', 'report_sqlqueries');
 }
 
 echo $OUTPUT->header() . $OUTPUT->heading($headstr);

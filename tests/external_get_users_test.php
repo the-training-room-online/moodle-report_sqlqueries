@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 
-namespace report_customsql\external;
+namespace report_sqlqueries\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -27,10 +27,11 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 /**
  * Tests for the get_users web service.
  *
- * @package   report_customsql
- * @category  external
- * @copyright 2020 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @category   external
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2020 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 class get_users_testcase extends \externallib_advanced_testcase {
 
@@ -47,8 +48,8 @@ class get_users_testcase extends \externallib_advanced_testcase {
         $coursecreateorroleid = $DB->get_field('role', 'id', ['shortname' => 'coursecreator']);
 
         role_change_permission($managerroleid, $context, 'moodle/site:viewreports', CAP_ALLOW);
-        role_change_permission($managerroleid, $context, 'report/customsql:view', CAP_ALLOW);
-        role_change_permission($coursecreateorroleid, $context, 'report/customsql:view', CAP_ALLOW);
+        role_change_permission($managerroleid, $context, 'report/sqlqueries:view', CAP_ALLOW);
+        role_change_permission($coursecreateorroleid, $context, 'report/sqlqueries:view', CAP_ALLOW);
 
         // Create some users.
         $DB->update_record('user', (object)
@@ -109,11 +110,11 @@ class get_users_testcase extends \externallib_advanced_testcase {
         ], $result);
     }
 
-    public function test_get_users_customsql_view() {
+    public function test_get_users_sqlqueries_view() {
         [$admin, $manager, $coursecreateor] = $this->setup_users();
         $defaultuserimage = 'https://www.example.com/moodle/theme/image.php/_s/boost/core/1/u/f2';
 
-        $result = get_users::execute('', 'report/customsql:view');
+        $result = get_users::execute('', 'report/sqlqueries:view');
         $result = \external_api::clean_returnvalue(get_users::execute_returns(), $result);
 
         $this->assertEquals([
@@ -145,7 +146,7 @@ class get_users_testcase extends \externallib_advanced_testcase {
         [, $manager] = $this->setup_users();
         $defaultuserimage = 'https://www.example.com/moodle/theme/image.php/_s/boost/core/1/u/f2';
 
-        $result = get_users::execute('Man', 'report/customsql:view');
+        $result = get_users::execute('Man', 'report/sqlqueries:view');
         $result = \external_api::clean_returnvalue(get_users::execute_returns(), $result);
 
         $this->assertEquals([
@@ -163,7 +164,7 @@ class get_users_testcase extends \externallib_advanced_testcase {
         [$admin] = $this->setup_users();
         $defaultuserimage = 'https://www.example.com/moodle/theme/image.php/_s/boost/core/1/u/f2';
 
-        $result = get_users::execute('n U', 'report/customsql:view');
+        $result = get_users::execute('n U', 'report/sqlqueries:view');
         $result = \external_api::clean_returnvalue(get_users::execute_returns(), $result);
 
         $this->assertEquals([

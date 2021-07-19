@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines message providers (types of message sent) for the customsql report.
+ * Defines message providers (types of message sent) for the Sql Query Reports.
  *
- * @package report_customsql
- * @copyright 2012 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2012 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,6 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 $messageproviders = array(
     // Messages informing users that a certain report has run, for reports set to do that.
     'notification' => array(
-        'capability' => 'report/customsql:view',
+        'capability' => 'report/sqlqueries:view',
     ),
 );

@@ -16,17 +16,18 @@
 /*
  * JavaScript to expand/collapse sections.
  *
- * @package report_customsql
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2014 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 /**
- * @module report_customsql/reportcategories
+ * @module report_sqlqueries/reportcategories
  */
 define(['jquery'], function($) {
     /**
-     * @alias module:report_customsql/reportcategories
+     * @alias module:report_sqlqueries/reportcategories
      */
     var t = {
 

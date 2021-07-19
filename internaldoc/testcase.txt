@@ -1,4 +1,4 @@
-Ad-hoc database queries
+SQL Query Reports
 
 This report plugin allows Administrators to set up arbitrary database queries
 to act as ad-hoc reports. Reports can run as follows:
@@ -54,27 +54,27 @@ for your queries.
 
 Users: set up an admin and a student, setup 3 other users each with one of the
 capabilities listed in (06) 'Who can access this query' from the user interface.
-user1: 'Anyone who can view this report (report/customsql:view)'
+user1: 'Anyone who can view this report (report/sqlqueries:view)'
 user2: 'Users who can see system reports (moodle/site:viewreports)'
 user3: 'Only administrators (moodle/site:config)'
 
 Case 1
 ------
 
-1) Go to: Site administration -> Reports -> Ad-hoc database queries
+1) Go to: Site administration -> Reports -> SQL Query Reports
 
 2) Press 'Add a new query' button or click on 'Edit this query' icon to edit an
 existing query.
 
-3) Give the query a name or modify the naem of an existing query
+3) Give the query a name or modify the name of an existing query
 
 4) write a description for the query
 
 5) place your sql query in 'Query SQL' field. Note, the table name can be written
 in {} without the prefix or with the word 'prefix_' and not in {}. For instance,
 following queries are identical:
-q1) SELECT * FROM {report_customsql_queries} csql WHERE csql.runable = 'manual'
-q2) SELECT * FROM perifx_report_customsql_queries csql WHERE csql.runable = 'manual'
+q1) SELECT * FROM {report_sqlqueries_queries} csql WHERE csql.runable = 'manual'
+q2) SELECT * FROM perifx_report_sqlqueries_queries csql WHERE csql.runable = 'manual'
 
 6) Press 'Verify the Query SQL text and update the form' button if you have used
 parameters in your query. Then the parameter fields will appear for their values
@@ -97,7 +97,7 @@ to download the result as a csv file.
 Case 2
 ------
 
-1) Go to: Site administration -> Reports -> Ad-hoc database queries
+1) Go to: Site administration -> Reports -> SQL Query Reports
 
 2) Press 'Add a new query' button or click on 'Edit this query' icon to edit an
 existing query.
@@ -109,8 +109,8 @@ existing query.
 5) place your sql query in 'Query SQL' field. Note, the table name can be written
 in {} without the prefix or with the word 'prefix_' and not in {}. For instance,
 following queries are identical:
-q1) SELECT * FROM {report_customsql_queries} csql WHERE csql.runable = 'manual'
-q2) SELECT * FROM perifx_report_customsql_queries csql WHERE csql.runable = 'manual'
+q1) SELECT * FROM {report_sqlqueries_queries} csql WHERE csql.runable = 'manual'
+q2) SELECT * FROM perifx_report_sqlqueries_queries csql WHERE csql.runable = 'manual'
 
 6) Press 'Verify the Query SQL text and update the form' button if you have used
 parameters in your query. Then the parameter fields will appear for their values

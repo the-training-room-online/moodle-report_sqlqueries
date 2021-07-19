@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for viewing/entering parameters for a custom SQL report.
+ * Form for viewing/entering parameters for a SQL query report.
  *
- * @package report_customsql
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2009 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -28,25 +29,26 @@ require_once($CFG->libdir . '/formslib.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 
 /**
- * Form for viewing a custom SQL report.
+ * Form for viewing a SQL query report.
  *
- * @copyright © 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2009 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
-class report_customsql_view_form extends moodleform {
+class report_sqlqueries_view_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('header', 'heading', get_string('queryparameters', 'report_customsql'));
+        $mform->addElement('header', 'heading', get_string('queryparameters', 'report_sqlqueries'));
 
         foreach ($this->_customdata as $queryparam => $formparam) {
-            $type = report_customsql_get_element_type($queryparam);
+            $type = report_sqlqueries_get_element_type($queryparam);
             $mform->addElement($type, $formparam, str_replace('_', ' ', $queryparam));
             if ($type == 'text') {
                 $mform->setType($formparam, PARAM_RAW);
             }
         }
 
-        $this->add_action_buttons(true, get_string('runquery', 'report_customsql'));
+        $this->add_action_buttons(true, get_string('runquery', 'report_sqlqueries'));
     }
 }

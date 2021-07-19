@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace report_customsql\external;
+namespace report_sqlqueries\external;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -24,9 +24,10 @@ require_once($CFG->libdir . '/externallib.php');
 /**
  * Web service used by form autocomplete to get a list of users with a given capability.
  *
- * @package   report_customsql
- * @copyright 2020 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2020 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 class get_users extends \external_api {
     /**
@@ -57,7 +58,7 @@ class get_users extends \external_api {
 
         $context = \context_system::instance();
         self::validate_context($context);
-        require_capability('report/customsql:definequeries', $context);
+        require_capability('report/sqlqueries:definequeries', $context);
 
         $extrafields = get_extra_user_fields($context);
 

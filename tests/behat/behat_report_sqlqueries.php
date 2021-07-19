@@ -15,13 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Behat steps for the custom SQL report.
+ * Behat steps for the SQL Query Reports.
  *
- * All these steps include the phrase 'custom SQL report'.
+ * All these steps include the phrase 'SQL Query Report'.
  *
- * @package report_customsql
- * @copyright 2019 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2019 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 // NOTE: no MOODLE_INTERNAL test because this file is required by Behat.
@@ -33,23 +34,23 @@ use Behat\Gherkin\Node\TableNode;
 
 
 /**
- * Behat steps for the the custom SQL report.
+ * Behat steps for the the SQL Query Reports.
  *
- * All these steps include the phrase 'custom SQL report'.
+ * All these steps include the phrase 'SQL Query Report'.
  */
-class behat_report_customsql extends behat_base {
+class behat_report_sqlqueries extends behat_base {
 
     /**
      * Create a new report in the database.
      *
-     * For example
-     * Given the following custom sql report exists:
+     * For example:
+     * Given the following SQL Query report exists:
      *   | name     | Test report            |
      *   | querysql | SELECT * FROM {config} |
      *   | category | Miscellaneous          |
      *
      * if present, category name is looked up in the database to get the id.
-     * @Given /^the following custom sql report exists:$/
+     * @Given /^the following SQL Query report exists:$/
      * @param TableNode $data Supplied data
      */
     public function the_following_custom_sql_report_exists(TableNode $data) {
@@ -82,12 +83,12 @@ class behat_report_customsql extends behat_base {
             unset($report['category']);
         } else {
             $report['categoryid'] = $this->get_category_id_by_name(
-                    get_string('defaultcategory', 'report_customsql'));
+                    get_string('defaultcategory', 'report_sqlqueries'));
         }
 
         // Capability.
         if (isset($report['capability']) &&
-                !in_array($report['capability'], report_customsql_capability_options())) {
+                !in_array($report['capability'], report_sqlqueries_capability_options())) {
             throw new Exception('Capability ' . $report['capability'] . ' is not a valid choice.');
         } else {
             $report['capability'] = 'moodle/site:config';
@@ -95,7 +96,7 @@ class behat_report_customsql extends behat_base {
 
         // Capability.
         if (isset($report['runable']) &&
-                !in_array($report['runable'], report_customsql_runable_options())) {
+                !in_array($report['runable'], report_sqlqueries_runable_options())) {
             throw new Exception('Invalid runable value ' . $report['capability'] . '.');
         } else {
             $report['runable'] = 'manual';
@@ -108,7 +109,7 @@ class behat_report_customsql extends behat_base {
      * Create a new report in the database.
      *
      * For example
-     * Given the custom sql report "Test report" exists with SQL:
+     * Given the SQL Query report "Test report" exists with SQL:
      * """
      *   SELECT *
      *   FROM {config}
@@ -116,7 +117,7 @@ class behat_report_customsql extends behat_base {
      *
      * Creates a report in the default category with long SQL.
      *
-     * @Given /^the custom sql report "(?P<REPORT_NAME>[^"]*)" exists with SQL:$/
+     * @Given /^the SQL Query report "(?P<REPORT_NAME>[^"]*)" exists with SQL:$/
      * @param string $reportname the name of the report to go to.
      * @param PyStringNode $querysql The query SQL
      */
@@ -127,7 +128,7 @@ class behat_report_customsql extends behat_base {
             'descriptionformat' => FORMAT_HTML,
             'querysql' => (string)$querysql,
             'categoryid' => $this->get_category_id_by_name(
-                    get_string('defaultcategory', 'report_customsql')),
+                    get_string('defaultcategory', 'report_sqlqueries')),
             'capability' => 'moodle/site:config',
             'runable' => 'manual',
         ];
@@ -138,50 +139,50 @@ class behat_report_customsql extends behat_base {
     protected function save_new_report(array $report) {
         global $CFG, $DB;
 
-        require_once($CFG->dirroot . '/report/customsql/locallib.php');
+        require_once($CFG->dirroot . '/report/sqlqueries/locallib.php');
 
-        $params = report_customsql_get_query_placeholders_and_field_names($report['querysql']);
+        $params = report_sqlqueries_get_query_placeholders_and_field_names($report['querysql']);
         if ($params) {
             $report['queryparams'] = serialize($params);
         }
 
-        $DB->insert_record('report_customsql_queries', (object) $report);
+        $DB->insert_record('report_sqlqueries_queries', (object) $report);
     }
 
     /**
      * Create a new report category in the database.
      *
-     * @Given /^the custom sql report category "(?P<CATEGORY_NAME>[^"]*)" exists:$/
+     * @Given /^the SQL Query report category "(?P<CATEGORY_NAME>[^"]*)" exists:$/
      * @param string $name the name of the category to create.
      */
     public function the_custom_sql_report_cateogry_exists(string $name) {
         global $DB;
-        $DB->insert_record('report_customsql_categories', (object) ['name' => $name]);
+        $DB->insert_record('report_sqlqueries_categories', (object) ['name' => $name]);
     }
 
     /**
      * Views a report.
      *
-     * Goes straight to the URL $CFG->wwwroot/report/customsql/view.php?id=123
+     * Goes straight to the URL $CFG->wwwroot/report/sqlqueries/view.php?id=123
      *
-     * @When /^I view the "(?P<REPORT_NAME>[^"]*)" custom sql report$/
+     * @When /^I view the "(?P<REPORT_NAME>[^"]*)" SQL Query report$/
      * @param string $reportname the name of the report to go to.
      */
     public function i_view_the_x_custom_sql_report(string $reportname) {
         $report = $this->get_report_by_name($reportname);
-        $this->getSession()->visit($this->locate_path('/report/customsql/view.php?id=' . $report->id));
+        $this->getSession()->visit($this->locate_path('/report/sqlqueries/view.php?id=' . $report->id));
     }
 
     /**
      * Simulates going directly to a report with certain parameters in the URL.
      *
      * For example:
-     * When I view the "Frog" custom sql report with these URL parameters:
+     * When I view the "Frog" SQL Query report with these URL parameters:
      *   | frogname | freddy |
      *   | colour   | green  |
-     * this goes to the URL $CFG->wwwroot/report/customsql/view.php?id=123&frogname=freddy&colour=green.
+     * this goes to the URL $CFG->wwwroot/report/sqlqueries/view.php?id=123&frogname=freddy&colour=green.
      *
-     * @When /^I view the "(?P<REPORT_NAME>[^"]*)" custom sql report with these URL parameters:$/
+     * @When /^I view the "(?P<REPORT_NAME>[^"]*)" SQL Query report with these URL parameters:$/
      * @param string $reportname the name of the report to go to.
      * @param TableNode $data two columns, name and value, params to add to the URL.
      */
@@ -201,7 +202,7 @@ class behat_report_customsql extends behat_base {
             $queryparams[] = $name . '=' . urlencode($rowdata[1]);
         }
 
-        $this->getSession()->visit($this->locate_path('/report/customsql/view.php?' .
+        $this->getSession()->visit($this->locate_path('/report/sqlqueries/view.php?' .
                 implode('&', $queryparams)));
     }
 
@@ -213,7 +214,7 @@ class behat_report_customsql extends behat_base {
      */
     protected function get_report_by_name(string $reportname): stdClass {
         global $DB;
-        return $DB->get_record('report_customsql_queries', ['displayname' => $reportname], '*', MUST_EXIST);
+        return $DB->get_record('report_sqlqueries_queries', ['displayname' => $reportname], '*', MUST_EXIST);
     }
 
     /**
@@ -224,6 +225,6 @@ class behat_report_customsql extends behat_base {
      */
     protected function get_category_id_by_name(string $name): int {
         global $DB;
-        return $DB->get_field('report_customsql_categories', 'id', ['name' => $name], MUST_EXIST);
+        return $DB->get_field('report_sqlqueries_categories', 'id', ['name' => $name], MUST_EXIST);
     }
 }

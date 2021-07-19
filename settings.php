@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Admin settings tree setup for the Custom SQL admin report.
+ * Admin settings tree setup for the SQL Queries admin report.
  *
- * @package report_customsql
- * @copyright 2011 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2011 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,21 +35,21 @@ if ($ADMIN->fulltree) {
     $default = \core_calendar\type_factory::get_calendar_instance()->get_starting_weekday();
 
     // Setting this option to -1 will use the value from the site calendar.
-    $options = [-1 => get_string('startofweek_default', 'report_customsql', $days[$default])] + $days;
-    $settings->add(new admin_setting_configselect('report_customsql/startwday',
-            get_string('startofweek', 'report_customsql'),
-            get_string('startofweek_desc', 'report_customsql'), -1, $options));
+    $options = [-1 => get_string('startofweek_default', 'report_sqlqueries', $days[$default])] + $days;
+    $settings->add(new admin_setting_configselect('report_sqlqueries/startwday',
+            get_string('startofweek', 'report_sqlqueries'),
+            get_string('startofweek_desc', 'report_sqlqueries'), -1, $options));
 
-    $settings->add(new admin_setting_configtext_with_maxlength('report_customsql/querylimitdefault',
-            get_string('querylimitdefault', 'report_customsql'),
-            get_string('querylimitdefault_desc', 'report_customsql'), 5000, PARAM_INT, null, 10));
+    $settings->add(new admin_setting_configtext_with_maxlength('report_sqlqueries/querylimitdefault',
+            get_string('querylimitdefault', 'report_sqlqueries'),
+            get_string('querylimitdefault_desc', 'report_sqlqueries'), 5000, PARAM_INT, null, 10));
 
-    $settings->add(new admin_setting_configtext_with_maxlength('report_customsql/querylimitmaximum',
-            get_string('querylimitmaximum', 'report_customsql'),
-            get_string('querylimitmaximum_desc', 'report_customsql'), 5000, PARAM_INT, null, 10));
+    $settings->add(new admin_setting_configtext_with_maxlength('report_sqlqueries/querylimitmaximum',
+            get_string('querylimitmaximum', 'report_sqlqueries'),
+            get_string('querylimitmaximum_desc', 'report_sqlqueries'), 5000, PARAM_INT, null, 10));
 }
 
-$ADMIN->add('reports', new admin_externalpage('report_customsql',
-        get_string('pluginname', 'report_customsql'),
-        new moodle_url('/report/customsql/index.php'),
-        'report/customsql:view'));
+$ADMIN->add('reports', new admin_externalpage('report_sqlqueries',
+        get_string('pluginname', 'report_sqlqueries'),
+        new moodle_url('/report/sqlqueries/index.php'),
+        'report/sqlqueries:view'));

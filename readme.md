@@ -1,12 +1,18 @@
-# Ad-hoc database queries
+# SQL Query Reports
+> Moodle Report Plug-in
+
+> **FORK** This plug-in was forked from 
+> [moodle-report_customsql](https://github.com/moodleou/moodle-report_customsql)
+> in order to add the ability to attach the CSV files to emails using stored 
+> files.
 
 This report plugin allows Administrators to set up arbitrary database queries
 to act as ad-hoc reports. Reports can be of two types, either run on demand,
 or scheduled to run automatically. Reports can be grouped into categories,
 which helps when you have a lot of them.
 
-Other users with the right capability can go to Administration -> Reports ->
-Ad-hoc database queries and see a list of queries to which they have access.
+Other users with the right capability can go to *Administration* -> *Reports* ->
+*SQL Query Reports* and see a list of queries to which they have access.
 Results can be viewed on-screen or downloaded as CSV.
 
 Reports can contain placeholders, in which case, the user running the report is
@@ -41,17 +47,12 @@ but many others who can be seen in the git log.
 
 This plugin should be compatible with Moodle 3.3+.
 
-### Install from the plugins database
-
-Install from the Moodle plugins database
-* https://moodle.org/plugins/report_customsql
-
 ### Install using git
 
-Or you can install using git. Type this commands in the root of your Moodle install
+Or you can install using git. Type this commands in the root of your Moodle 
+install:
 
-    git clone https://github.com/moodleou/moodle-report_customsql.git report/customsql
-    echo '/report/customsql/' >> .git/info/exclude
+    git clone https://github. com/the-training-room-online/moodle-report_sqlqueries.git report/sqlqueries
+    echo '/report/sqlqueries/' >> .git/info/exclude
 
-Then run the moodle update process
-Site administration > Notifications
+Then run the moodle update process *Site administration* > *Notifications*.

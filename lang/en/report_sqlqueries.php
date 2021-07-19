@@ -15,18 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Lang strings for report/customsql
+ * Lang strings for report/sqlqueries
  *
- * @package report_customsql
- * @copyright 2015 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2015 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 $string['addcategory'] = 'Add a new category';
 $string['addcategorydesc'] = 'To change a report\'s category, you must edit that report. Here you can edit category texts, delete a category or add a new category.';
 $string['addreport'] = 'Add a new query';
 $string['addreportcategory'] = 'Add a new category for reports';
-$string['anyonewhocanveiwthisreport'] = 'Anyone who can view this report (report/customsql:view)';
+$string['anyonewhocanveiwthisreport'] = 'Anyone who can view this report (report/sqlqueries:view)';
 $string['archivedversions'] = 'Archived versions of this query';
 $string['at'] = 'at';
 $string['automaticallydaily'] = 'Scheduled, daily';
@@ -40,15 +41,15 @@ $string['categorycontent'] = '({$a->manual} on-demand, {$a->daily} daily, {$a->w
 $string['categoryexists'] = 'Category names must be unique, this name already exists';
 $string['categorynamex'] = 'Category name: {$a}';
 $string['changetheparameters'] = 'Change the parameters';
-$string['crontask'] = 'Ad-hoc database queries: run scheduled reports task';
+$string['crontask'] = 'SQL Query Reports: run scheduled reports task';
 $string['customdir'] = 'Export csv report to path / directory';
 $string['customdir_help'] = 'Files are exported in the CSV format to the file path specified. If a directory is specified the filename format will be reportid-timecreated.csv.';
 $string['customdirmustexist'] = 'The directory "{$a}" does not exist.';
 $string['customdirnotadirectory'] = 'The path "{$a}" is not a directory.';
 $string['customdirnotwritable'] = 'The directory "{$a}" is not writable.';
-$string['customsql:definequeries'] = 'Define custom queries';
-$string['customsql:managecategories'] = 'Define custom categories';
-$string['customsql:view'] = 'View custom queries report';
+$string['sqlqueries:definequeries'] = 'Define custom queries';
+$string['sqlqueries:managecategories'] = 'Define custom categories';
+$string['sqlqueries:view'] = 'View custom queries report';
 $string['dailyheader'] = 'Daily';
 $string['dailyheader_help'] = 'These queries are automatically run every day at the specified time. These links let you view the results that has already been accumulated.';
 $string['defaultcategory'] = 'Miscellaneous';
@@ -91,7 +92,7 @@ $string['errorinsertingreport'] = 'Error inserting a query.';
 $string['errorupdatingreport'] = 'Error updating a query.';
 $string['invalidreportid'] = 'Invalid query id {$a}.';
 $string['lastexecuted'] = 'This query was last run on {$a->lastrun}. It took {$a->lastexecutiontime}s to run.';
-$string['messageprovider:notification'] = 'Ad-hoc database query notifications';
+$string['messageprovider:notification'] = 'SQL Query Reports notifications';
 $string['managecategories'] = 'Manage report categories';
 $string['manual'] = 'On-demand';
 $string['manualheader'] = 'On-demand';
@@ -111,7 +112,7 @@ $string['note'] = 'Notes';
 $string['notrunyet'] = 'This query has not yet been run.';
 $string['onerow'] = 'The query returns one row, accumulate the results one row at a time';
 $string['parametervalue'] = '{$a->name}: {$a->value}';
-$string['pluginname'] = 'Ad-hoc database queries';
+$string['pluginname'] = 'SQL Query Reports';
 $string['query_deleted'] = 'Query deleted';
 $string['query_edited'] = 'Query edited';
 $string['query_viewed'] = 'Query viewed';
@@ -165,4 +166,4 @@ $string['verifyqueryandupdate'] = 'Verify the Query SQL text and update the form
 $string['weeklyheader'] = 'Weekly';
 $string['weeklyheader_help'] = 'These queries are automatically run on the first day of each week, to report on the previous week. These links let you view the results that has already been accumulated.';
 $string['whocanaccess'] = 'Who can access this query';
-$string['privacy:metadata'] = 'The Ad-hoc database queries plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The SQL Query Reports plugin does not store any personal data.';
