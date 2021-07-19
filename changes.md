@@ -1,4 +1,4 @@
-# Change log for the Ad-hoc database queries report
+# Change log for the SQL Queries Report
 
 ## Changes in 3.9
 

@@ -15,32 +15,34 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The customsql query deleted event.
+ * The sqlqueries query deleted event.
  *
- * @package    report_customsql
- * @copyright  2014 The Open University
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2014 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace report_customsql\event;
+namespace report_sqlqueries\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Event generated when a query is deleted.
  *
- * @package report_customsql
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2014 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 class query_deleted extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'report_customsql_queries';
+        $this->data['objecttable'] = 'report_sqlqueries_queries';
     }
 
     public static function get_name() {
-        return get_string('query_deleted', 'report_customsql');
+        return get_string('query_deleted', 'report_sqlqueries');
     }
 
     public function get_description() {
@@ -48,11 +50,11 @@ class query_deleted extends \core\event\base {
     }
 
     public function get_url() {
-        return new \moodle_url('/report/customsql/index.php');
+        return new \moodle_url('/report/sqlqueries/index.php');
     }
 
     public function get_legacy_logdata() {
-        $url = '../report/customsql/index.php';
-        return array(0, "report_customsql", 'delete query', $url, $this->objectid, $this->contextinstanceid);
+        $url = '../report/sqlqueries/index.php';
+        return array(0, "report_sqlqueries", 'delete query', $url, $this->objectid, $this->contextinstanceid);
     }
 }

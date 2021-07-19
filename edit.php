@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Script for editing a custom SQL report.
+ * Script for editing a SQL Query report.
  *
- * @package report_customsql
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2009 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../config.php');
@@ -33,9 +34,9 @@ if ($id) {
     $urlparams['id'] = $id;
 }
 
-admin_externalpage_setup('report_customsql', '', $urlparams, '/report/customsql/edit.php');
+admin_externalpage_setup('report_sqlqueries', '', $urlparams, '/report/sqlqueries/edit.php');
 $context = context_system::instance();
-require_capability('report/customsql:definequeries', $context);
+require_capability('report/sqlqueries:definequeries', $context);
 
 $relativeurl = 'edit.php';
 $report = null;
@@ -43,9 +44,9 @@ $reportquerysql = '';
 
 // Are we editing an existing report, or creating a new one.
 if ($id) {
-    $report = $DB->get_record('report_customsql_queries', array('id' => $id));
+    $report = $DB->get_record('report_sqlqueries_queries', array('id' => $id));
     if (!$report) {
-        print_error('invalidreportid', 'report_customsql', report_customsql_url('index.php'), $id);
+        print_error('invalidreportid', 'report_sqlqueries', report_sqlqueries_url('index.php'), $id);
     }
     $reportquerysql = $report->querysql;
     $queryparams = !empty($report->queryparams) ? unserialize($report->queryparams) : array();
@@ -56,12 +57,12 @@ if ($id) {
 }
 
 $querysql = optional_param('querysql', $reportquerysql, PARAM_RAW);
-$queryparams = report_customsql_get_query_placeholders_and_field_names($querysql);
+$queryparams = report_sqlqueries_get_query_placeholders_and_field_names($querysql);
 
-$mform = new report_customsql_edit_form(report_customsql_url($relativeurl), $queryparams);
+$mform = new report_sqlqueries_edit_form(report_sqlqueries_url($relativeurl), $queryparams);
 
 if ($mform->is_cancelled()) {
-    redirect(report_customsql_url('index.php'));
+    redirect(report_sqlqueries_url('index.php'));
 }
 
 if ($newreport = $mform->get_data()) {
@@ -92,31 +93,31 @@ if ($newreport = $mform->get_data()) {
 
     if ($id) {
         $newreport->id = $id;
-        $ok = $DB->update_record('report_customsql_queries', $newreport);
+        $ok = $DB->update_record('report_sqlqueries_queries', $newreport);
         if (!$ok) {
-            print_error('errorupdatingreport', 'report_customsql',
-                        report_customsql_url('edit.php?id=' . $id));
+            print_error('errorupdatingreport', 'report_sqlqueries',
+                        report_sqlqueries_url('edit.php?id=' . $id));
         }
 
     } else {
-        $id = $DB->insert_record('report_customsql_queries', $newreport);
+        $id = $DB->insert_record('report_sqlqueries_queries', $newreport);
         if (!$id) {
-            print_error('errorinsertingreport', 'report_customsql',
-                        report_customsql_url('edit.php'));
+            print_error('errorinsertingreport', 'report_sqlqueries',
+                        report_sqlqueries_url('edit.php'));
         }
     }
 
-    report_customsql_log_edit($id);
+    report_sqlqueries_log_edit($id);
     if ($newreport->runable == 'manual') {
-        redirect(report_customsql_url('view.php?id=' . $id));
+        redirect(report_sqlqueries_url('view.php?id=' . $id));
     } else {
-        redirect(report_customsql_url('index.php'));
+        redirect(report_sqlqueries_url('index.php'));
     }
 }
 
-admin_externalpage_setup('report_customsql');
+admin_externalpage_setup('report_sqlqueries');
 echo $OUTPUT->header().
-     $OUTPUT->heading(get_string('editingareport', 'report_customsql'));
+     $OUTPUT->heading(get_string('editingareport', 'report_sqlqueries'));
 
 if ($report) {
     $report->description = array('text' => $report->description, 'format' => $report->descriptionformat);

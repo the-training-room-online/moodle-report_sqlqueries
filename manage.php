@@ -15,52 +15,53 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Custom SQL report categories.
+ * SQL Query report categories.
  *
- * Users with the report/customsql:managequeries capability can create and edit
+ * Users with the report/sqlqueries:managequeries capability can create and edit
  * the custom categories.
  *
  * This page shows the list of categories, with edit icons, and an add new button
- * if you have the report/customsql:managequeries capability.
+ * if you have the report/sqlqueries:managequeries capability.
  *
- * @package report_customsql
- * @copyright 2013 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2013 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/locallib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-admin_externalpage_setup('report_customsql', '', null, '/report/customsql/manage.php');
+admin_externalpage_setup('report_sqlqueries', '', null, '/report/sqlqueries/manage.php');
 $context = context_system::instance();
-require_capability('report/customsql:managecategories', $context);
+require_capability('report/sqlqueries:managecategories', $context);
 
-echo $OUTPUT->header() . $OUTPUT->heading(get_string('managecategories', 'report_customsql'));
+echo $OUTPUT->header() . $OUTPUT->heading(get_string('managecategories', 'report_sqlqueries'));
 
-$categories = $DB->get_records('report_customsql_categories', null, 'name ASC');
+$categories = $DB->get_records('report_sqlqueries_categories', null, 'name ASC');
 
-echo html_writer::tag('p', get_string('addcategorydesc', 'report_customsql'));
+echo html_writer::tag('p', get_string('addcategorydesc', 'report_sqlqueries'));
 
 if (!empty($categories)) {
     foreach ($categories as $category) {
         echo html_writer::start_tag('div');
 
-        echo ' ' . html_writer::tag('span', format_string($category->name) . ' ', array('class' => 'report_customsql')) .
+        echo ' ' . html_writer::tag('span', format_string($category->name) . ' ', array('class' => 'report_sqlqueries')) .
         html_writer::tag('a', $OUTPUT->pix_icon('t/edit', get_string('edit')),
-                array('title' => get_string('editcategoryx', 'report_customsql', format_string($category->name)),
-                        'href' => report_customsql_url('addcategory.php?id=' . $category->id)));
+                array('title' => get_string('editcategoryx', 'report_sqlqueries', format_string($category->name)),
+                        'href' => report_sqlqueries_url('addcategory.php?id=' . $category->id)));
 
-        if ($category->id != 1 && !$DB->record_exists('report_customsql_queries', ['categoryid' => $category->id])) {
+        if ($category->id != 1 && !$DB->record_exists('report_sqlqueries_queries', ['categoryid' => $category->id])) {
             echo ' ' .  html_writer::tag('a', $OUTPUT->pix_icon('t/delete', get_string('delete')),
-                    array('title' => get_string('deletecategoryx', 'report_customsql', format_string($category->name)),
-                            'href' => report_customsql_url('categorydelete.php?id=' . $category->id)));
+                    array('title' => get_string('deletecategoryx', 'report_sqlqueries', format_string($category->name)),
+                            'href' => report_sqlqueries_url('categorydelete.php?id=' . $category->id)));
         }
 
         echo html_writer::end_tag('div');
     }
 }
 
-echo $OUTPUT->single_button(report_customsql_url('addcategory.php'),
-        get_string('addcategory', 'report_customsql'));
+echo $OUTPUT->single_button(report_sqlqueries_url('addcategory.php'),
+        get_string('addcategory', 'report_sqlqueries'));
 
 echo $OUTPUT->footer();

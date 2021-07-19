@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Library code for the custom SQL report.
+ * Library code for the SQL Query report.
  *
- * @package report_customsql
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2009 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,13 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/validateurlsyntax.php');
 
-define('REPORT_CUSTOMSQL_LIMIT_EXCEEDED_MARKER', '-- ROW LIMIT EXCEEDED --');
+define('REPORT_SQLQUERIES_LIMIT_EXCEEDED_MARKER', '-- ROW LIMIT EXCEEDED --');
 
-function report_customsql_execute_query($sql, $params = null, $limitnum = null) {
+function report_sqlqueries_execute_query($sql, $params = null, $limitnum = null) {
     global $CFG, $DB;
 
     if ($limitnum === null) {
-        $limitnum = get_config('report_customsql', 'querylimitdefault');
+        $limitnum = get_config('report_sqlqueries', 'querylimitdefault');
     }
 
     $sql = preg_replace('/\bprefix_(?=\w+)/i', $CFG->prefix, $sql);
@@ -48,14 +49,14 @@ function report_customsql_execute_query($sql, $params = null, $limitnum = null) 
     return $DB->get_recordset_sql($sql, $params, 0, $limitnum);
 }
 
-function report_customsql_prepare_sql($report, $timenow) {
+function report_sqlqueries_prepare_sql($report, $timenow) {
     global $USER;
     $sql = $report->querysql;
     if ($report->runable != 'manual') {
-        list($end, $start) = report_customsql_get_starts($report, $timenow);
-        $sql = report_customsql_substitute_time_tokens($sql, $start, $end);
+        list($end, $start) = report_sqlqueries_get_starts($report, $timenow);
+        $sql = report_sqlqueries_substitute_time_tokens($sql, $start, $end);
     }
-    $sql = report_customsql_substitute_user_token($sql, $USER->id);
+    $sql = report_sqlqueries_substitute_user_token($sql, $USER->id);
     return $sql;
 }
 
@@ -64,7 +65,7 @@ function report_customsql_prepare_sql($report, $timenow) {
  * @param string $sql The sql.
  * @return array placeholder names including the leading colon.
  */
-function report_customsql_get_query_placeholders($sql) {
+function report_sqlqueries_get_query_placeholders($sql) {
     preg_match_all('/(?<!:):[a-z][a-z0-9_]*/', $sql, $matches);
     return $matches[0];
 }
@@ -75,9 +76,9 @@ function report_customsql_get_query_placeholders($sql) {
  * @param string $querysql The sql.
  * @return string[] placeholder name => form field name.
  */
-function report_customsql_get_query_placeholders_and_field_names(string $querysql): array {
+function report_sqlqueries_get_query_placeholders_and_field_names(string $querysql): array {
     $queryparams = [];
-    foreach (report_customsql_get_query_placeholders($querysql) as $queryparam) {
+    foreach (report_sqlqueries_get_query_placeholders($querysql) as $queryparam) {
         $queryparams[substr($queryparam, 1)] = 'queryparam' . substr($queryparam, 1);
     }
     return $queryparams;
@@ -88,7 +89,7 @@ function report_customsql_get_query_placeholders_and_field_names(string $querysq
  * @param string $name the placeholder name.
  * @return string a formslib element type, for example 'text' or 'date_time_selector'.
  */
-function report_customsql_get_element_type($name) {
+function report_sqlqueries_get_element_type($name) {
     $regex = '/^date|date$/';
     if (preg_match($regex, $name)) {
         return 'date_time_selector';
@@ -96,28 +97,28 @@ function report_customsql_get_element_type($name) {
     return 'text';
 }
 
-function report_customsql_generate_csv($report, $timenow) {
+function report_sqlqueries_generate_csv($report, $timenow) {
     global $DB;
     $starttime = microtime(true);
 
-    $sql = report_customsql_prepare_sql($report, $timenow);
+    $sql = report_sqlqueries_prepare_sql($report, $timenow);
 
     $queryparams = !empty($report->queryparams) ? unserialize($report->queryparams) : array();
-    $querylimit  = $report->querylimit ?? get_config('report_customsql', 'querylimitdefault');
+    $querylimit  = $report->querylimit ?? get_config('report_sqlqueries', 'querylimitdefault');
     // Query one extra row, so we can tell if we hit the limit.
-    $rs = report_customsql_execute_query($sql, $queryparams, $querylimit + 1);
+    $rs = report_sqlqueries_execute_query($sql, $queryparams, $querylimit + 1);
 
     $csvfilenames = array();
     $csvtimestamp = null;
     $count = 0;
     foreach ($rs as $row) {
         if (!$csvtimestamp) {
-            list($csvfilename, $csvtimestamp) = report_customsql_csv_filename($report, $timenow);
+            list($csvfilename, $csvtimestamp) = report_sqlqueries_csv_filename($report, $timenow);
             $csvfilenames[] = $csvfilename;
 
             if (!file_exists($csvfilename)) {
                 $handle = fopen($csvfilename, 'w');
-                report_customsql_start_csv($handle, $row, $report);
+                report_sqlqueries_start_csv($handle, $row, $report);
             } else {
                 $handle = fopen($csvfilename, 'a');
             }
@@ -125,22 +126,22 @@ function report_customsql_generate_csv($report, $timenow) {
 
         $data = get_object_vars($row);
         foreach ($data as $name => $value) {
-            if (report_customsql_get_element_type($name) == 'date_time_selector' &&
-                    report_customsql_is_integer($value) && $value > 0) {
+            if (report_sqlqueries_get_element_type($name) == 'date_time_selector' &&
+                    report_sqlqueries_is_integer($value) && $value > 0) {
                 $data[$name] = userdate($value, '%F %T');
             }
         }
         if ($report->singlerow) {
             array_unshift($data, strftime('%Y-%m-%d', $timenow));
         }
-        report_customsql_write_csv_row($handle, $data);
+        report_sqlqueries_write_csv_row($handle, $data);
         $count += 1;
     }
     $rs->close();
 
     if (!empty($handle)) {
         if ($count > $querylimit) {
-            report_customsql_write_csv_row($handle, [REPORT_CUSTOMSQL_LIMIT_EXCEEDED_MARKER]);
+            report_sqlqueries_write_csv_row($handle, [REPORT_SQLQUERIES_LIMIT_EXCEEDED_MARKER]);
         }
 
         fclose($handle);
@@ -151,25 +152,25 @@ function report_customsql_generate_csv($report, $timenow) {
     $updaterecord->id = $report->id;
     $updaterecord->lastrun = time();
     $updaterecord->lastexecutiontime = round((microtime(true) - $starttime) * 1000);
-    $DB->update_record('report_customsql_queries', $updaterecord);
+    $DB->update_record('report_sqlqueries_queries', $updaterecord);
 
     // Report is runable daily, weekly or monthly.
     if ($report->runable != 'manual') {
         if ($csvfilenames) {
             foreach ($csvfilenames as $csvfilename) {
                 if (!empty($report->emailto)) {
-                    report_customsql_email_report($report, $csvfilename);
+                    report_sqlqueries_email_report($report, $csvfilename);
                 }
                 if (!empty($report->customdir)) {
-                    report_customsql_copy_csv_to_customdir($report, $timenow, $csvfilename);
+                    report_sqlqueries_copy_csv_to_customdir($report, $timenow, $csvfilename);
                 }
             }
         } else { // If there is no data.
             if (!empty($report->emailto)) {
-                report_customsql_email_report($report);
+                report_sqlqueries_email_report($report);
             }
             if (!empty($report->customdir)) {
-                report_customsql_copy_csv_to_customdir($report, $timenow);
+                report_sqlqueries_copy_csv_to_customdir($report, $timenow);
             }
         }
     }
@@ -180,52 +181,52 @@ function report_customsql_generate_csv($report, $timenow) {
  * @param mixed $value some value
  * @return bool whether $value is an integer, or a string that looks like an integer.
  */
-function report_customsql_is_integer($value) {
+function report_sqlqueries_is_integer($value) {
     return (string) (int) $value === (string) $value;
 }
 
-function report_customsql_csv_filename($report, $timenow) {
+function report_sqlqueries_csv_filename($report, $timenow) {
     if ($report->runable == 'manual') {
-        return report_customsql_temp_cvs_name($report->id, $timenow);
+        return report_sqlqueries_temp_cvs_name($report->id, $timenow);
 
     } else if ($report->singlerow) {
-        return report_customsql_accumulating_cvs_name($report->id);
+        return report_sqlqueries_accumulating_cvs_name($report->id);
 
     } else {
-        list($timestart) = report_customsql_get_starts($report, $timenow);
-        return report_customsql_scheduled_cvs_name($report->id, $timestart);
+        list($timestart) = report_sqlqueries_get_starts($report, $timenow);
+        return report_sqlqueries_scheduled_cvs_name($report->id, $timestart);
     }
 }
 
-function report_customsql_temp_cvs_name($reportid, $timestamp) {
+function report_sqlqueries_temp_cvs_name($reportid, $timestamp) {
     global $CFG;
-    $path = 'admin_report_customsql/temp/'.$reportid;
+    $path = 'admin_report_sqlqueries/temp/'.$reportid;
     make_upload_directory($path);
     return array($CFG->dataroot.'/'.$path.'/'.strftime('%Y%m%d-%H%M%S', $timestamp).'.csv',
                  $timestamp);
 }
 
-function report_customsql_scheduled_cvs_name($reportid, $timestart) {
+function report_sqlqueries_scheduled_cvs_name($reportid, $timestart) {
     global $CFG;
-    $path = 'admin_report_customsql/'.$reportid;
+    $path = 'admin_report_sqlqueries/'.$reportid;
     make_upload_directory($path);
     return array($CFG->dataroot.'/'.$path.'/'.strftime('%Y%m%d-%H%M%S', $timestart).'.csv',
                  $timestart);
 }
 
-function report_customsql_accumulating_cvs_name($reportid) {
+function report_sqlqueries_accumulating_cvs_name($reportid) {
     global $CFG;
-    $path = 'admin_report_customsql/'.$reportid;
+    $path = 'admin_report_sqlqueries/'.$reportid;
     make_upload_directory($path);
     return array($CFG->dataroot.'/'.$path.'/accumulate.csv', 0);
 }
 
-function report_customsql_get_archive_times($report) {
+function report_sqlqueries_get_archive_times($report) {
     global $CFG;
     if ($report->runable == 'manual' || $report->singlerow) {
         return array();
     }
-    $files = glob($CFG->dataroot.'/admin_report_customsql/'.$report->id.'/*.csv');
+    $files = glob($CFG->dataroot.'/admin_report_sqlqueries/'.$report->id.'/*.csv');
     $archivetimes = array();
     foreach ($files as $file) {
         if (preg_match('|/(\d\d\d\d)(\d\d)(\d\d)-(\d\d)(\d\d)(\d\d)\.csv$|', $file, $matches)) {
@@ -237,39 +238,39 @@ function report_customsql_get_archive_times($report) {
     return $archivetimes;
 }
 
-function report_customsql_substitute_time_tokens($sql, $start, $end) {
+function report_sqlqueries_substitute_time_tokens($sql, $start, $end) {
     return str_replace(array('%%STARTTIME%%', '%%ENDTIME%%'), array($start, $end), $sql);
 }
 
-function report_customsql_substitute_user_token($sql, $userid) {
+function report_sqlqueries_substitute_user_token($sql, $userid) {
     return str_replace('%%USERID%%', $userid, $sql);
 }
 
-function report_customsql_url($relativeurl) {
+function report_sqlqueries_url($relativeurl) {
     global $CFG;
-    return $CFG->wwwroot.'/report/customsql/'.$relativeurl;
+    return $CFG->wwwroot.'/report/sqlqueries/'.$relativeurl;
 }
 
-function report_customsql_capability_options() {
+function report_sqlqueries_capability_options() {
     return array(
-        'report/customsql:view' => get_string('anyonewhocanveiwthisreport', 'report_customsql'),
-        'moodle/site:viewreports' => get_string('userswhocanviewsitereports', 'report_customsql'),
-        'moodle/site:config' => get_string('userswhocanconfig', 'report_customsql')
+        'report/sqlqueries:view' => get_string('anyonewhocanveiwthisreport', 'report_sqlqueries'),
+        'moodle/site:viewreports' => get_string('userswhocanviewsitereports', 'report_sqlqueries'),
+        'moodle/site:config' => get_string('userswhocanconfig', 'report_sqlqueries')
     );
 }
 
-function report_customsql_runable_options($type = null) {
+function report_sqlqueries_runable_options($type = null) {
     if ($type === 'manual') {
-        return array('manual' => get_string('manual', 'report_customsql'));
+        return array('manual' => get_string('manual', 'report_sqlqueries'));
     }
-    return array('manual' => get_string('manual', 'report_customsql'),
-                 'daily' => get_string('automaticallydaily', 'report_customsql'),
-                 'weekly' => get_string('automaticallyweekly', 'report_customsql'),
-                 'monthly' => get_string('automaticallymonthly', 'report_customsql')
+    return array('manual' => get_string('manual', 'report_sqlqueries'),
+                 'daily' => get_string('automaticallydaily', 'report_sqlqueries'),
+                 'weekly' => get_string('automaticallyweekly', 'report_sqlqueries'),
+                 'monthly' => get_string('automaticallymonthly', 'report_sqlqueries')
     );
 }
 
-function report_customsql_daily_at_options() {
+function report_sqlqueries_daily_at_options() {
     $time = array();
     for ($h = 0; $h < 24; $h++) {
         $hour = ($h < 10) ? "0$h" : $h;
@@ -278,35 +279,35 @@ function report_customsql_daily_at_options() {
     return $time;
 }
 
-function report_customsql_email_options() {
-    return array('emailnumberofrows' => get_string('emailnumberofrows', 'report_customsql'),
-            'emailresults' => get_string('emailresults', 'report_customsql'),
+function report_sqlqueries_email_options() {
+    return array('emailnumberofrows' => get_string('emailnumberofrows', 'report_sqlqueries'),
+            'emailresults' => get_string('emailresults', 'report_sqlqueries'),
     );
 }
 
-function report_customsql_bad_words_list() {
+function report_sqlqueries_bad_words_list() {
     return array('ALTER', 'CREATE', 'DELETE', 'DROP', 'GRANT', 'INSERT', 'INTO',
                  'TRUNCATE', 'UPDATE');
 }
 
-function report_customsql_contains_bad_word($string) {
-    return preg_match('/\b('.implode('|', report_customsql_bad_words_list()).')\b/i', $string);
+function report_sqlqueries_contains_bad_word($string) {
+    return preg_match('/\b('.implode('|', report_sqlqueries_bad_words_list()).')\b/i', $string);
 }
 
-function report_customsql_log_delete($id) {
-    $event = \report_customsql\event\query_deleted::create(
+function report_sqlqueries_log_delete($id) {
+    $event = \report_sqlqueries\event\query_deleted::create(
             array('objectid' => $id, 'context' => context_system::instance()));
     $event->trigger();
 }
 
-function report_customsql_log_edit($id) {
-    $event = \report_customsql\event\query_edited::create(
+function report_sqlqueries_log_edit($id) {
+    $event = \report_sqlqueries\event\query_edited::create(
             array('objectid' => $id, 'context' => context_system::instance()));
     $event->trigger();
 }
 
-function report_customsql_log_view($id) {
-    $event = \report_customsql\event\query_viewed::create(
+function report_sqlqueries_log_view($id) {
+    $event = \report_sqlqueries\event\query_viewed::create(
             array('objectid' => $id, 'context' => context_system::instance()));
     $event->trigger();
 }
@@ -316,11 +317,11 @@ function report_customsql_log_view($id) {
  *
  * @param int $categoryid
  * @param string $type, type of report (manual, daily, weekly or monthly)
- * @return stdClass[] relevant rows from report_customsql_queries.
+ * @return stdClass[] relevant rows from report_sqlqueries_queries.
  */
-function report_customsql_get_reports_for($categoryid, $type) {
+function report_sqlqueries_get_reports_for($categoryid, $type) {
     global $DB;
-    return $DB->get_records('report_customsql_queries',
+    return $DB->get_records('report_sqlqueries_queries',
         array('runable' => $type, 'categoryid' => $categoryid), 'displayname');
 }
 
@@ -330,7 +331,7 @@ function report_customsql_get_reports_for($categoryid, $type) {
  * @param object $reports, the result of DB query
  * @param string $type, type of report (manual, daily, weekly or monthly)
  */
-function report_customsql_print_reports_for($reports, $type) {
+function report_sqlqueries_print_reports_for($reports, $type) {
     global $OUTPUT;
 
     if (empty($reports)) {
@@ -338,13 +339,13 @@ function report_customsql_print_reports_for($reports, $type) {
     }
 
     if (!empty($type)) {
-        $help = html_writer::tag('span', $OUTPUT->help_icon($type . 'header', 'report_customsql'));
-        echo $OUTPUT->heading(get_string($type . 'header', 'report_customsql') . $help, 3);
+        $help = html_writer::tag('span', $OUTPUT->help_icon($type . 'header', 'report_sqlqueries'));
+        echo $OUTPUT->heading(get_string($type . 'header', 'report_sqlqueries') . $help, 3);
     }
 
     $context = context_system::instance();
-    $canedit = has_capability('report/customsql:definequeries', $context);
-    $capabilities = report_customsql_capability_options();
+    $canedit = has_capability('report/sqlqueries:definequeries', $context);
+    $capabilities = report_sqlqueries_capability_options();
     foreach ($reports as $report) {
         if (!empty($report->capability) && !has_capability($report->capability, $context)) {
             continue;
@@ -352,20 +353,20 @@ function report_customsql_print_reports_for($reports, $type) {
 
         echo html_writer::start_tag('p');
         echo html_writer::tag('a', format_string($report->displayname),
-                              array('href' => report_customsql_url('view.php?id='.$report->id))).
-             ' '.report_customsql_time_note($report, 'span');
+                              array('href' => report_sqlqueries_url('view.php?id='.$report->id))).
+             ' '.report_sqlqueries_time_note($report, 'span');
         if ($canedit) {
             $imgedit = $OUTPUT->pix_icon('t/edit', get_string('edit'));
             $imgdelete = $OUTPUT->pix_icon('t/delete', get_string('delete'));
-            echo ' '.html_writer::tag('span', get_string('availableto', 'report_customsql',
+            echo ' '.html_writer::tag('span', get_string('availableto', 'report_sqlqueries',
                                       $capabilities[$report->capability]),
                                       array('class' => 'admin_note')).' '.
                  html_writer::tag('a', $imgedit,
-                         ['title' => get_string('editreportx', 'report_customsql', format_string($report->displayname)),
-                          'href' => report_customsql_url('edit.php?id='.$report->id)]) . ' ' .
+                         ['title' => get_string('editreportx', 'report_sqlqueries', format_string($report->displayname)),
+                          'href' => report_sqlqueries_url('edit.php?id='.$report->id)]) . ' ' .
                  html_writer::tag('a', $imgdelete,
-                            array('title' => get_string('deletereportx', 'report_customsql', format_string($report->displayname)),
-                                  'href' => report_customsql_url('delete.php?id='.$report->id)));
+                            array('title' => get_string('deletereportx', 'report_sqlqueries', format_string($report->displayname)),
+                                  'href' => report_sqlqueries_url('delete.php?id='.$report->id)));
         }
         echo html_writer::end_tag('p');
         echo "\n";
@@ -380,7 +381,7 @@ function report_customsql_print_reports_for($reports, $type) {
  * @param string[] $row the row of raw column headers from the CSV file.
  * @return array with two elements: the column headers to use in the table, and the columns that are links.
  */
-function report_customsql_get_table_headers($row) {
+function report_sqlqueries_get_table_headers($row) {
     $colnames = array_combine($row, $row);
     $linkcolumns = [];
     $colheaders = [];
@@ -411,7 +412,7 @@ function report_customsql_get_table_headers($row) {
  * @param int[] $linkcolumns
  * @return string[] cell contents for output.
  */
-function report_customsql_display_row($row, $linkcolumns) {
+function report_sqlqueries_display_row($row, $linkcolumns) {
     $rowdata = array();
     foreach ($row as $key => $value) {
         if (isset($linkcolumns[$key]) && $linkcolumns[$key] === -1) {
@@ -434,22 +435,22 @@ function report_customsql_display_row($row, $linkcolumns) {
     return $rowdata;
 }
 
-function report_customsql_time_note($report, $tag) {
+function report_sqlqueries_time_note($report, $tag) {
     if ($report->lastrun) {
         $a = new stdClass;
         $a->lastrun = userdate($report->lastrun);
         $a->lastexecutiontime = $report->lastexecutiontime / 1000;
-        $note = get_string('lastexecuted', 'report_customsql', $a);
+        $note = get_string('lastexecuted', 'report_sqlqueries', $a);
 
     } else {
-        $note = get_string('notrunyet', 'report_customsql');
+        $note = get_string('notrunyet', 'report_sqlqueries');
     }
 
     return html_writer::tag($tag, $note, array('class' => 'admin_note'));
 }
 
 
-function report_customsql_pretify_column_names($row, $querysql) {
+function report_sqlqueries_pretify_column_names($row, $querysql) {
     $colnames = [];
 
     foreach (get_object_vars($row) as $colname => $ignored) {
@@ -471,7 +472,7 @@ function report_customsql_pretify_column_names($row, $querysql) {
  * @param resource $handle the file pointer
  * @param array $data a data row
  */
-function report_customsql_write_csv_row($handle, $data) {
+function report_sqlqueries_write_csv_row($handle, $data) {
     global $CFG;
     $escapeddata = array();
     foreach ($data as $value) {
@@ -484,12 +485,12 @@ function report_customsql_write_csv_row($handle, $data) {
     fwrite($handle, implode(',', $escapeddata)."\r\n");
 }
 
-function report_customsql_start_csv($handle, $firstrow, $report) {
-    $colnames = report_customsql_pretify_column_names($firstrow, $report->querysql);
+function report_sqlqueries_start_csv($handle, $firstrow, $report) {
+    $colnames = report_sqlqueries_pretify_column_names($firstrow, $report->querysql);
     if ($report->singlerow) {
-        array_unshift($colnames, get_string('queryrundate', 'report_customsql'));
+        array_unshift($colnames, get_string('queryrundate', 'report_sqlqueries'));
     }
-    report_customsql_write_csv_row($handle, $colnames);
+    report_sqlqueries_write_csv_row($handle, $colnames);
 }
 
 /**
@@ -498,7 +499,7 @@ function report_customsql_start_csv($handle, $firstrow, $report) {
  * @return array with two elements: the timestamp for hour $at today (where today
  *      is defined by $timenow) and the timestamp for hour $at yesterday.
  */
-function report_customsql_get_daily_time_starts($timenow, $at) {
+function report_sqlqueries_get_daily_time_starts($timenow, $at) {
     $hours = $at;
     $minutes = 0;
     $dateparts = getdate($timenow);
@@ -510,11 +511,11 @@ function report_customsql_get_daily_time_starts($timenow, $at) {
         );
 }
 
-function report_customsql_get_week_starts($timenow) {
+function report_sqlqueries_get_week_starts($timenow) {
     $dateparts = getdate($timenow);
 
     // Get configured start of week value. If -1 then use the value from the site calendar.
-    $startofweek = get_config('report_customsql', 'startwday');
+    $startofweek = get_config('report_sqlqueries', 'startwday');
     if ($startofweek == -1) {
         $startofweek = \core_calendar\type_factory::get_calendar_instance()->get_starting_weekday();
     }
@@ -528,7 +529,7 @@ function report_customsql_get_week_starts($timenow) {
     );
 }
 
-function report_customsql_get_month_starts($timenow) {
+function report_sqlqueries_get_month_starts($timenow) {
     $dateparts = getdate($timenow);
 
     return array(
@@ -537,26 +538,26 @@ function report_customsql_get_month_starts($timenow) {
     );
 }
 
-function report_customsql_get_starts($report, $timenow) {
+function report_sqlqueries_get_starts($report, $timenow) {
     switch ($report->runable) {
         case 'daily':
-            return report_customsql_get_daily_time_starts($timenow, $report->at);
+            return report_sqlqueries_get_daily_time_starts($timenow, $report->at);
         case 'weekly':
-            return report_customsql_get_week_starts($timenow);
+            return report_sqlqueries_get_week_starts($timenow);
         case 'monthly':
-            return report_customsql_get_month_starts($timenow);
+            return report_sqlqueries_get_month_starts($timenow);
         default:
             throw new Exception('unexpected $report->runable.');
     }
 }
 
-function report_customsql_delete_old_temp_files($upto) {
+function report_sqlqueries_delete_old_temp_files($upto) {
     global $CFG;
 
     $count = 0;
     $comparison = strftime('%Y%m%d-%H%M%S', $upto).'csv';
 
-    $files = glob($CFG->dataroot.'/admin_report_customsql/temp/*/*.csv');
+    $files = glob($CFG->dataroot.'/admin_report_sqlqueries/temp/*/*.csv');
     if (empty($files)) {
         return;
     }
@@ -570,7 +571,7 @@ function report_customsql_delete_old_temp_files($upto) {
     return $count;
 }
 
-function report_customsql_validate_users($userstring, $capability) {
+function report_sqlqueries_validate_users($userstring, $capability) {
     global $DB;
     if (empty($userstring)) {
         return null;
@@ -578,33 +579,33 @@ function report_customsql_validate_users($userstring, $capability) {
 
     $a = new stdClass();
     $a->capability = $capability;
-    $a->whocanaccess = get_string('whocanaccess', 'report_customsql');
+    $a->whocanaccess = get_string('whocanaccess', 'report_sqlqueries');
 
     $usernames = preg_split("/[\s,;]+/", $userstring);
     if ($usernames) {
         foreach ($usernames as $username) {
             // Cannot find the user in the database.
             if (!$user = $DB->get_record('user', array('username' => $username))) {
-                return get_string('usernotfound', 'report_customsql', $username);
+                return get_string('usernotfound', 'report_sqlqueries', $username);
             }
             // User does not have the chosen access level.
             $context = context_user::instance($user->id);
             $a->username = $username;
             if (!has_capability($capability, $context, $user)) {
-                return get_string('userhasnothiscapability', 'report_customsql', $a);
+                return get_string('userhasnothiscapability', 'report_sqlqueries', $a);
             }
         }
     }
     return null;
 }
 
-function report_customsql_get_message_no_data($report) {
+function report_sqlqueries_get_message_no_data($report) {
     // Construct subject.
-    $subject = get_string('emailsubjectnodata', 'report_customsql',
-            report_customsql_plain_text_report_name($report));
-    $url = new moodle_url('/report/customsql/view.php', array('id' => $report->id));
-    $link = get_string('emailink', 'report_customsql', html_writer::tag('a', $url, array('href' => $url)));
-    $fullmessage = html_writer::tag('p', get_string('nodatareturned', 'report_customsql') . ' ' . $link);
+    $subject = get_string('emailsubjectnodata', 'report_sqlqueries',
+            report_sqlqueries_plain_text_report_name($report));
+    $url = new moodle_url('/report/sqlqueries/view.php', array('id' => $report->id));
+    $link = get_string('emailink', 'report_sqlqueries', html_writer::tag('a', $url, array('href' => $url)));
+    $fullmessage = html_writer::tag('p', get_string('nodatareturned', 'report_sqlqueries') . ' ' . $link);
     $fullmessagehtml = $fullmessage;
 
     // Create the message object.
@@ -617,7 +618,7 @@ function report_customsql_get_message_no_data($report) {
     return $message;
 }
 
-function report_customsql_get_message($report, $csvfilename) {
+function report_sqlqueries_get_message($report, $csvfilename) {
     $handle = fopen($csvfilename, 'r');
     $table = new html_table();
     $table->head = fgetcsv($handle);
@@ -634,14 +635,14 @@ function report_customsql_get_message($report, $csvfilename) {
 
     // Construct subject.
     if ($countrows == 0) {
-        $subject = get_string('emailsubjectnodata', 'report_customsql',
-                report_customsql_plain_text_report_name($report));
+        $subject = get_string('emailsubjectnodata', 'report_sqlqueries',
+                report_sqlqueries_plain_text_report_name($report));
     } else if ($countrows == 1) {
-        $subject = get_string('emailsubject1row', 'report_customsql',
-                report_customsql_plain_text_report_name($report));
+        $subject = get_string('emailsubject1row', 'report_sqlqueries',
+                report_sqlqueries_plain_text_report_name($report));
     } else {
-        $subject = get_string('emailsubjectxrows', 'report_customsql',
-                ['name' => report_customsql_plain_text_report_name($report), 'rows' => $countrows]);
+        $subject = get_string('emailsubjectxrows', 'report_sqlqueries',
+                ['name' => report_sqlqueries_plain_text_report_name($report), 'rows' => $countrows]);
     }
 
     // Construct message without the table.
@@ -651,12 +652,12 @@ function report_customsql_get_message($report, $csvfilename) {
     }
 
     if ($countrows === 1) {
-        $returnrows = html_writer::tag('span', get_string('emailrow', 'report_customsql', $countrows));
+        $returnrows = html_writer::tag('span', get_string('emailrow', 'report_sqlqueries', $countrows));
     } else {
-        $returnrows = html_writer::tag('span', get_string('emailrows', 'report_customsql', $countrows));
+        $returnrows = html_writer::tag('span', get_string('emailrows', 'report_sqlqueries', $countrows));
     }
-    $url = new moodle_url('/report/customsql/view.php', array('id' => $report->id));
-    $link = get_string('emailink', 'report_customsql', html_writer::tag('a', $url, array('href' => $url)));
+    $url = new moodle_url('/report/sqlqueries/view.php', array('id' => $report->id));
+    $link = get_string('emailink', 'report_sqlqueries', html_writer::tag('a', $url, array('href' => $url)));
     $fullmessage .= html_writer::tag('p', $returnrows . ' ' . $link);
 
     // Construct message in html.
@@ -677,7 +678,7 @@ function report_customsql_get_message($report, $csvfilename) {
     return $message;
 }
 
-function report_customsql_email_report($report, $csvfilename = null) {
+function report_sqlqueries_email_report($report, $csvfilename = null) {
     global $DB;
 
     // If there are no recipients return.
@@ -686,23 +687,23 @@ function report_customsql_email_report($report, $csvfilename = null) {
     }
     // Get the message.
     if ($csvfilename) {
-        $message = report_customsql_get_message($report, $csvfilename);
+        $message = report_sqlqueries_get_message($report, $csvfilename);
     } else {
-        $message = report_customsql_get_message_no_data($report);
+        $message = report_sqlqueries_get_message_no_data($report);
     }
 
     // Email all recipients.
     $usernames = preg_split("/[\s,;]+/", $report->emailto);
     foreach ($usernames as $username) {
         $recipient = $DB->get_record('user', array('username' => $username), '*', MUST_EXIST);
-        $messageid = report_customsql_send_email_notification($recipient, $message);
+        $messageid = report_sqlqueries_send_email_notification($recipient, $message);
         if (!$messageid) {
-            mtrace(get_string('emailsentfailed', 'report_customsql', fullname($recipient)));
+            mtrace(get_string('emailsentfailed', 'report_sqlqueries', fullname($recipient)));
         }
     }
 }
 
-function report_customsql_get_list_of_users($str, $inputfield = 'username', $outputfield = 'id') {
+function report_sqlqueries_get_list_of_users($str, $inputfield = 'username', $outputfield = 'id') {
     global $DB;
     if (!$userarray = preg_split("/[\s,;]+/", $str)) {
         return null;
@@ -717,14 +718,14 @@ function report_customsql_get_list_of_users($str, $inputfield = 'username', $out
     return implode(',', $users);
 }
 
-function report_customsql_get_ready_to_run_daily_reports($timenow) {
+function report_sqlqueries_get_ready_to_run_daily_reports($timenow) {
     global $DB;
-    $reports = $DB->get_records_select('report_customsql_queries', "runable = ?", array('daily'), 'id');
+    $reports = $DB->get_records_select('report_sqlqueries_queries', "runable = ?", array('daily'), 'id');
 
     $reportstorun = array();
     foreach ($reports as $id => $r) {
         // Check whether the report is ready to run.
-        if (!report_customsql_is_daily_report_ready($r, $timenow)) {
+        if (!report_sqlqueries_is_daily_report_ready($r, $timenow)) {
             continue;
         }
         $reportstorun[$id] = $r;
@@ -739,11 +740,11 @@ function report_customsql_get_ready_to_run_daily_reports($timenow) {
  * @param object $message the message object.
  * @return mixed result of {@link message_send()}.
  */
-function report_customsql_send_email_notification($recipient, $message) {
+function report_sqlqueries_send_email_notification($recipient, $message) {
 
     // Prepare the message.
     $eventdata = new \core\message\message();
-    $eventdata->component         = 'report_customsql';
+    $eventdata->component         = 'report_sqlqueries';
     $eventdata->name              = 'notification';
     $eventdata->notification      = 1;
     $eventdata->courseid          = SITEID;
@@ -765,13 +766,13 @@ function report_customsql_send_email_notification($recipient, $message) {
  * @param int $timenow
  * @return boolean
  */
-function report_customsql_is_daily_report_ready($report, $timenow) {
+function report_sqlqueries_is_daily_report_ready($report, $timenow) {
     // Time when the report should run today.
-    list($runtimetoday) = report_customsql_get_daily_time_starts($timenow, $report->at);
+    list($runtimetoday) = report_sqlqueries_get_daily_time_starts($timenow, $report->at);
 
     // Values used to check whether the report has already run today.
-    list($today) = report_customsql_get_daily_time_starts($timenow, 0);
-    list($lastrunday) = report_customsql_get_daily_time_starts($report->lastrun, 0);
+    list($today) = report_sqlqueries_get_daily_time_starts($timenow, 0);
+    list($lastrunday) = report_sqlqueries_get_daily_time_starts($report->lastrun, 0);
 
     if (($runtimetoday <= $timenow) && ($today > $lastrunday)) {
         return true;
@@ -779,9 +780,9 @@ function report_customsql_is_daily_report_ready($report, $timenow) {
     return false;
 }
 
-function report_customsql_category_options() {
+function report_sqlqueries_category_options() {
     global $DB;
-    return $DB->get_records_menu('report_customsql_categories', null, 'name ASC', 'id, name');
+    return $DB->get_records_menu('report_sqlqueries_categories', null, 'name ASC', 'id, name');
 }
 
 /**
@@ -791,7 +792,7 @@ function report_customsql_category_options() {
  * @param integer $timenow
  * @param string $csvfilename
  */
-function report_customsql_copy_csv_to_customdir($report, $timenow, $csvfilename = null) {
+function report_sqlqueries_copy_csv_to_customdir($report, $timenow, $csvfilename = null) {
 
     // If the filename is empty then there was no data so we can't export a
     // new file, but if we are saving over the same file then we should delete
@@ -822,7 +823,7 @@ function report_customsql_copy_csv_to_customdir($report, $timenow, $csvfilename 
  * @param object $report report settings from the database.
  * @return string the usable version of the name.
  */
-function report_customsql_plain_text_report_name($report): string {
+function report_sqlqueries_plain_text_report_name($report): string {
     return format_string($report->displayname, true,
             ['context' => context_system::instance()]);
 }

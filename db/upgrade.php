@@ -15,31 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Upgrade code for report_customsql.
+ * Upgrade code for report_sqlqueries.
  *
- * @package report_customsql
- * @copyright 2015 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2015 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Upgrade code for report_customsql.
+ * Upgrade code for report_sqlqueries.
  *
  * @param string $oldversion the version we are upgrading from.
  * @return bool true on success.
  */
-function xmldb_report_customsql_upgrade($oldversion) {
+function xmldb_report_sqlqueries_upgrade($oldversion) {
     global $CFG, $DB;
 
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2012011900) {
 
-        // Add field to report_customsql_queries.
-        $table = new xmldb_table('report_customsql_queries');
+        // Add field to report_sqlqueries_queries.
+        $table = new xmldb_table('report_sqlqueries_queries');
         if ($dbman->table_exists($table)) {
             // Define and add the field 'queryparams'.
             $field = new xmldb_field('queryparams', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'querysql');
@@ -48,13 +49,13 @@ function xmldb_report_customsql_upgrade($oldversion) {
             }
         }
 
-        upgrade_plugin_savepoint(true, 2012011900, 'report', 'customsql');
+        upgrade_plugin_savepoint(true, 2012011900, 'report', 'sqlqueries');
     }
 
     if ($oldversion < 2012092400) {
 
-        // Add fields to report_customsql_queries.
-        $table = new xmldb_table('report_customsql_queries');
+        // Add fields to report_sqlqueries_queries.
+        $table = new xmldb_table('report_sqlqueries_queries');
         if ($dbman->table_exists($table)) {
 
             // Define and add the field 'at'.
@@ -74,12 +75,12 @@ function xmldb_report_customsql_upgrade($oldversion) {
             }
         }
 
-        upgrade_plugin_savepoint(true, 2012092400, 'report', 'customsql');
+        upgrade_plugin_savepoint(true, 2012092400, 'report', 'sqlqueries');
     }
 
     if ($oldversion < 2013062300) {
-        require_once($CFG->dirroot . '/report/customsql/locallib.php');
-        $table = new xmldb_table('report_customsql_queries');
+        require_once($CFG->dirroot . '/report/sqlqueries/locallib.php');
+        $table = new xmldb_table('report_sqlqueries_queries');
         $field = new xmldb_field('querylimit', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
                 XMLDB_NOTNULL, null, 5000, 'queryparams');
 
@@ -87,28 +88,28 @@ function xmldb_report_customsql_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_plugin_savepoint(true, 2013062300, 'report', 'customsql');
+        upgrade_plugin_savepoint(true, 2013062300, 'report', 'sqlqueries');
     }
 
     if ($oldversion < 2013102400) {
 
-        // Define table report_customsql_categories to be created.
-        $table = new xmldb_table('report_customsql_categories');
+        // Define table report_sqlqueries_categories to be created.
+        $table = new xmldb_table('report_sqlqueries_categories');
 
-        // Adding fields to table report_customsql_categories.
+        // Adding fields to table report_sqlqueries_categories.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null);
 
-        // Adding key to table report_customsql_categories.
+        // Adding key to table report_sqlqueries_categories.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
-        // Conditionally launch create table for report_customsql_categories.
+        // Conditionally launch create table for report_sqlqueries_categories.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
 
-        // Define field categoryid to be added to report_customsql_queries.
-        $table = new xmldb_table('report_customsql_queries');
+        // Define field categoryid to be added to report_sqlqueries_queries.
+        $table = new xmldb_table('report_sqlqueries_queries');
         $field = new xmldb_field('categoryid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, 'emailwhat');
 
         // Conditionally launch add field categoryid.
@@ -117,27 +118,27 @@ function xmldb_report_customsql_upgrade($oldversion) {
         }
 
         // Add key (for the new field just added).
-        $key = new xmldb_key('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'report_customsql_categories', array('id'));
+        $key = new xmldb_key('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'report_sqlqueries_categories', array('id'));
         $dbman->add_key($table, $key);
 
         // Create the default 'Miscellaneous' category.
         $category = new stdClass();
-        $category->name = get_string('defaultcategory', 'report_customsql');
-        if (!$DB->record_exists('report_customsql_categories', array('name' => $category->name))) {
-            $category->id = $DB->insert_record('report_customsql_categories', $category);
+        $category->name = get_string('defaultcategory', 'report_sqlqueries');
+        if (!$DB->record_exists('report_sqlqueries_categories', array('name' => $category->name))) {
+            $category->id = $DB->insert_record('report_sqlqueries_categories', $category);
         }
         // Update the existing query category ids, to move them into this category.
-        $sql = 'UPDATE {report_customsql_queries} SET categoryid =' . $category->id;
+        $sql = 'UPDATE {report_sqlqueries_queries} SET categoryid =' . $category->id;
         $DB->execute($sql);
 
         // Report savepoint reached.
-        upgrade_plugin_savepoint(true, 2013102400, 'report', 'customsql');
+        upgrade_plugin_savepoint(true, 2013102400, 'report', 'sqlqueries');
     }
 
     // Repeat upgrade step that might have got missed on some branches.
     if ($oldversion < 2014020300) {
-        require_once($CFG->dirroot . '/report/customsql/locallib.php');
-        $table = new xmldb_table('report_customsql_queries');
+        require_once($CFG->dirroot . '/report/sqlqueries/locallib.php');
+        $table = new xmldb_table('report_sqlqueries_queries');
         $field = new xmldb_field('querylimit', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED,
                 XMLDB_NOTNULL, null, 5000, 'queryparams');
 
@@ -145,13 +146,13 @@ function xmldb_report_customsql_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_plugin_savepoint(true, 2014020300, 'report', 'customsql');
+        upgrade_plugin_savepoint(true, 2014020300, 'report', 'sqlqueries');
     }
 
     if ($oldversion < 2015062900) {
 
-        // Define field descriptionformat to be added to report_customsql_queries.
-        $table = new xmldb_table('report_customsql_queries');
+        // Define field descriptionformat to be added to report_sqlqueries_queries.
+        $table = new xmldb_table('report_sqlqueries_queries');
         $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1', 'description');
 
         // Conditionally launch add field descriptionformat.
@@ -159,27 +160,27 @@ function xmldb_report_customsql_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-        // Customsql savepoint reached.
-        upgrade_plugin_savepoint(true, 2015062900, 'report', 'customsql');
+        // sqlqueries savepoint reached.
+        upgrade_plugin_savepoint(true, 2015062900, 'report', 'sqlqueries');
     }
 
     if ($oldversion < 2016011800) {
 
-        // Define field customdir to be added to report_customsql_queries.
-        $table = new xmldb_table('report_customsql_queries');
+        // Define field customdir to be added to report_sqlqueries_queries.
+        $table = new xmldb_table('report_sqlqueries_queries');
         $field = new xmldb_field('customdir', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'categoryid');
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
-        upgrade_plugin_savepoint(true, 2016011800, 'report', 'customsql');
+        upgrade_plugin_savepoint(true, 2016011800, 'report', 'sqlqueries');
     }
 
     if ($oldversion < 2019111101) {
         // For upgraded sites, set this setting to be backwards compatible.
-        set_config('startwday', '6', 'report_customsql');
-        upgrade_plugin_savepoint(true, 2019111101, 'report', 'customsql');
+        set_config('startwday', '6', 'report_sqlqueries');
+        upgrade_plugin_savepoint(true, 2019111101, 'report', 'sqlqueries');
     }
 
     return true;

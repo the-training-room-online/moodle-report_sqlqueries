@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Capability definitions for the custom SQL report.
+ * Capability definitions for the SQL Query report.
  *
- * @package report_customsql
- * @copyright 2009 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2009 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -27,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = array(
 
     // People who can view the reports at all.
-    'report/customsql:view' => array(
+    'report/sqlqueries:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -36,7 +37,7 @@ $capabilities = array(
         ),
 
     // People who can manage the reports categories.
-    'report/customsql:managecategories' => array(
+    'report/sqlqueries:managecategories' => array(
         'riskbitmask' => 0,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -45,7 +46,7 @@ $capabilities = array(
         ),
 
     // People who can define new queries.
-    'report/customsql:definequeries' => array(
+    'report/sqlqueries:definequeries' => array(
         'riskbitmask' => RISK_PERSONAL | RISK_DATALOSS | RISK_CONFIG,
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,

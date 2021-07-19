@@ -15,29 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Install code for report_customsql.
+ * Install code for report_sqlqueries.
  *
- * @package report_customsql
- * @copyright 2013 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2013 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 
 /**
- * Install code for report_customsql.
+ * Install code for report_sqlqueries.
  *
  * @return bool true on success.
  */
-function xmldb_report_customsql_install() {
+function xmldb_report_sqlqueries_install() {
     global $CFG, $DB;
 
     // Create the default 'Miscellaneous' category.
     $category = new stdClass();
-    $category->name = get_string('defaultcategory', 'report_customsql');
-    if (!$DB->record_exists('report_customsql_categories', array('name' => $category->name))) {
-        $DB->insert_record('report_customsql_categories', $category);
+    $category->name = get_string('defaultcategory', 'report_sqlqueries');
+    if (!$DB->record_exists('report_sqlqueries_categories', array('name' => $category->name))) {
+        $DB->insert_record('report_sqlqueries_categories', $category);
     }
 
     return true;

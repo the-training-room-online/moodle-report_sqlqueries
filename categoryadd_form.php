@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form for editing custom SQL reporting categories.
+ * Form for editing SQL Query reporting categories.
  *
- * @package report_customsql
- * @copyright 2013 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    report_sqlqueries
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2013 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,15 +30,16 @@ require_once(dirname(__FILE__) . '/locallib.php');
 
 
 /**
- * Form for editing custom SQL reporting categories.
+ * Form for editing SQL Query reporting categories.
  *
  * This is used by addcategory.php, for users who have
- * report/customsql:managecategories capability.
+ * report/sqlqueries:managecategories capability.
  *
- * @copyright 2013 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2021 The Training Room Online {@link https://ttro.com}
+ * @copyright  based on work by 2013 The Open University
+ * @license    {@link http://www.gnu.org/copyleft/gpl.html} GNU GPL v3 or later
  */
-class report_customsql_addcategory_form extends moodleform {
+class report_sqlqueries_addcategory_form extends moodleform {
 
     // Form definition.
     public function definition() {
@@ -50,7 +52,7 @@ class report_customsql_addcategory_form extends moodleform {
         if ($categoryid) {
             $strsubmit = get_string('savechanges');
         } else {
-            $strsubmit = get_string('addcategory', 'report_customsql');
+            $strsubmit = get_string('addcategory', 'report_sqlqueries');
         }
 
         $mform->addElement('text', 'name', get_string('categoryname'), array('size' => '30'));
@@ -73,9 +75,9 @@ class report_customsql_addcategory_form extends moodleform {
             if (!isset($data['id'])) {
                 $data['id'] = 0;// Ensure id to check against.
             }
-            if ($DB->get_record_select('report_customsql_categories',
+            if ($DB->get_record_select('report_sqlqueries_categories',
                     'name = ? AND id != ?', array($data['name'], $data['id']))) {
-                $errors['name'] = get_string('categoryexists', 'report_customsql');
+                $errors['name'] = get_string('categoryexists', 'report_sqlqueries');
             }
         }
         return $errors;

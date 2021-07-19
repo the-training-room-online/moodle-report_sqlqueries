@@ -1,4 +1,4 @@
-Ad-hoc database queries
+SQL Query Reports
 
 This report plugin allows Administrators to set up arbitrary database queries
 to act as ad-hoc reports. Reports can run as follows:
