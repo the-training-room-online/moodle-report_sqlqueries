@@ -60,7 +60,7 @@ Feature: SQL Query Reports
     And I view the "Test query" SQL Query report
     Then I should see "This query did not return any data."
 
-  Scenario: Create an Ad-hoc database queries category
+  Scenario: Create an SQL Query Report category
     When I log in as "admin"
     And I navigate to "Reports > SQL Query Reports" in site administration
     And I press "Manage report categories"
@@ -82,7 +82,7 @@ Feature: SQL Query Reports
       | Query name  | Test query                                    |
       | Query SQL   | SELECT * FROM {config} WHERE name = 'version' |
     And I press "Save changes"
-    And I follow "Ad-hoc database queries"
+    And I follow "SQL Query Reports"
     And I follow "Special reports"
     # Also test expand/collapse while we are here.
     Then I should see "Test query"
@@ -94,7 +94,7 @@ Feature: SQL Query Reports
     And I should not see "Expand all"
     And I should see "Collapse all"
 
-  Scenario: Delete an empty Ad-hoc database queries category
+  Scenario: Delete an empty SQL Query Reports category
     Given the SQL Query report category "Special reports" exists:
     When I log in as "admin"
     And I navigate to "Reports > SQL Query Reports" in site administration
@@ -188,9 +188,9 @@ Feature: SQL Query Reports
 
   Scenario: Test reporting when a query exceeds the limit
     Given the following config values are set as admin:
-      | querylimitdefault | 1 | report_customsql |
+      | querylimitdefault | 1 | report_sqlqueries |
     When I log in as "admin"
-    And I navigate to "Reports > Ad-hoc database queries" in site administration
+    And I navigate to "Reports > SQL Query Reports" in site administration
     And I press "Add a new query"
     And I set the following fields to these values:
       | Query name  | Test query                                                                                   |

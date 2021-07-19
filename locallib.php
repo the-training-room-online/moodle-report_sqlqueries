@@ -282,6 +282,7 @@ function report_sqlqueries_daily_at_options() {
 function report_sqlqueries_email_options() {
     return array('emailnumberofrows' => get_string('emailnumberofrows', 'report_sqlqueries'),
             'emailresults' => get_string('emailresults', 'report_sqlqueries'),
+            'emailattachment' => get_string('emailattachment', 'report_sqlqueries')
     );
 }
 
@@ -675,6 +676,23 @@ function report_sqlqueries_get_message($report, $csvfilename) {
     $message->fullmessagehtml   = $fullmessagehtml;
     $message->smallmessage      = null;
 
+    if ($report->emailwhat === 'emailattachment') {
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_pathname(
+            [
+                'contextid' => context_system::instance()->id,
+                'component' => 'report_sqlqueries',
+                'filearea' => 'admin_report_sqlqueries',
+                'itemid' => 0,
+                'filepath' => dirname($csvfilename) . '/',
+                'filename' => basename($csvfilename),
+            ],
+            $csvfilename
+        );
+        $message->attachment = $file;
+        $message->attachname = $file->get_filename();
+    }
+
     return $message;
 }
 
@@ -755,6 +773,11 @@ function report_sqlqueries_send_email_notification($recipient, $message) {
     $eventdata->fullmessageformat = $message->fullmessageformat;
     $eventdata->fullmessagehtml   = $message->fullmessagehtml;
     $eventdata->smallmessage      = $message->smallmessage;
+
+    if (isset($message->attachment)) {
+        $eventdata->attachment        = $message->attachment;
+        $eventdata->attachname        = $message->attachname;
+    }
 
     return message_send($eventdata);
 }

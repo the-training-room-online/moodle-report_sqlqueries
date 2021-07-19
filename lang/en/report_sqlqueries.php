@@ -70,6 +70,7 @@ $string['editcategory'] = 'Update category';
 $string['editcategoryx'] = 'Edit category \'{$a}\'';
 $string['editingareport'] = 'Editing an ad-hoc database query';
 $string['editreportx'] = 'Edit query \'{$a}\'';
+$string['emailattachment'] = 'Attach CSV to email body';
 $string['emailnumberofrows'] = 'Just the number of rows and the link';
 $string['emailresults'] = 'Put the results in the email body';
 $string['emailink'] = 'To access the report, click this link: {$a}';

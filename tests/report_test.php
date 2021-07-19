@@ -161,7 +161,8 @@ class report_sqlqueries_report_testcase extends advanced_testcase {
 
     public function test_report_sqlqueries_email_options() {
         $options = array('emailnumberofrows' => get_string('emailnumberofrows', 'report_sqlqueries'),
-                'emailresults' => get_string('emailresults', 'report_sqlqueries'));
+                'emailresults' => get_string('emailresults', 'report_sqlqueries'),
+                'emailattachment' => get_string('emailattachment', 'report_sqlqueries'));
         $this->assertEquals($options, report_sqlqueries_email_options());
     }
 
